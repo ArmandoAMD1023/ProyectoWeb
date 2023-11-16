@@ -11,7 +11,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
-        import { getDatabase, ref, child, get } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
@@ -27,23 +27,22 @@
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
 
-        const dbRef = ref(getDatabase());
+        const db = getFirestore(app);
         const listaClientes = document.getElementById('lista-clientes');
 
-        get(child(dbRef, `Cliente/${1}`)).then((snapshot) => {
-            if (snapshot.exists()) {
-                const clienteData = snapshot.val();
-                // Crear un nuevo elemento de lista y agregarlo al DOM
-                const li = document.createElement('li');
-                li.textContent = `Nombre: ${clienteData.Nombre}`;
-                listaClientes.appendChild(li);
-            } else {
-                console.log("No data available");
-            }
-        }).catch((error) => {
-            console.error(error);
-        });
+        const docRef = doc(db, "Clientes", "8MqRcUOEu1fuh2Ci88Zf");
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const clienteData = docSnap.data();
+
+            // Crear un nuevo elemento de lista y agregarlo al DOM
+            const li = document.createElement('li');
+            li.textContent = `Nombre: ${clienteData.Nombre}`;
+            listaClientes.appendChild(li);
+        } else {
+            console.log("No such document!");
+        }
     </script>
 </body>
 </html>
-
