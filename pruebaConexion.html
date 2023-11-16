@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mostrar Datos de Firebase</title>
+</head>
+<body>
+    <h1>aaa</h1>
+    <ul id="lista-clientes"></ul>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+        import { getDatabase, ref, child, get } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
+            authDomain: "hecagruas.firebaseapp.com",
+            databaseURL: "https://hecagruas-default-rtdb.firebaseio.com",
+            projectId: "hecagruas",
+            storageBucket: "hecagruas.appspot.com",
+            messagingSenderId: "115599983241",
+            appId: "1:115599983241:web:20a2db6bd320b616c43c58",
+            measurementId: "G-SW2SJC303M"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        const dbRef = ref(getDatabase());
+        const listaClientes = document.getElementById('lista-clientes');
+
+        get(child(dbRef, `Cliente/${1}`)).then((snapshot) => {
+            if (snapshot.exists()) {
+                const clienteData = snapshot.val();
+                // Crear un nuevo elemento de lista y agregarlo al DOM
+                const li = document.createElement('li');
+                li.textContent = `Nombre: ${clienteData.Nombre}`;
+                listaClientes.appendChild(li);
+            } else {
+                console.log("No data available");
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+    </script>
+</body>
+</html>
+
