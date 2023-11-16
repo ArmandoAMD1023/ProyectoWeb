@@ -1,28 +1,77 @@
-<!DOCTYPE html> 
-<html lang="es">
-    <head> 
-        <meta charset="utf-8"/>
-        <title>Proyecto Pogramación</title>
-        <link rel="stylesheet" href="CSS/Style.css">
-        
-    </head>
-
-    <body>
-        <div class="Panel">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSS/Style.css">
+    <title>Inicio de Sesión con Firebase</title>
+</head>
+<body>
+    <div class="Panel">
         <h2>Heca Montacargas Web</h2>
-        <img src="img/Logo.jpeg" alt="">
+        <img src="Img/Logo.jpeg" alt="">
         <h3>Login</h3>
-        <label for="usuario">Introduce tu usuario:</label><br>
-        <input type="text" id="usuario"><br>
-    
-        <label for="contraseña">Introduce tu contraseña:</label><br>
-        <input type="password" id="contraseña"><br><br>
-    
-        <button onclick="login()">Iniciar sesión</button>
-        <div id="result"></div>
-       
+    <form id="login-form">
+        <label for="email">Correo Electrónico:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="password">Contraseña:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Iniciar Sesión</button>
+    </form>
     </div>
-    </body>
+
+    <p id="login-message"></p>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
+            authDomain: "hecagruas.firebaseapp.com",
+            databaseURL: "https://hecagruas-default-rtdb.firebaseio.com",
+            projectId: "hecagruas",
+            storageBucket: "hecagruas.appspot.com",
+            messagingSenderId: "115599983241",
+            appId: "1:115599983241:web:20a2db6bd320b616c43c58",
+            measurementId: "G-SW2SJC303M"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        const auth = getAuth();
+
+        const loginForm = document.getElementById('login-form');
+        const loginMessage = document.getElementById('login-message');
+
+        loginForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    alert(`Inicio de sesión Exitoso`);
+                    //Redirigir al usuario a otra página o realizar otras acciones después del inicio de sesión exitoso.
+                    setTimeout(function() {
+                    window.location.href = 'pruebaConexion.html'; // Reemplaza con la URL a la que quieres redirigir
+                    }, 1000);
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    loginMessage.textContent = `Error al iniciar sesión: ${errorCode} - ${errorMessage}`;
+                    console.error(errorCode, errorMessage);
+                    // Aquí puedes manejar errores, por ejemplo, mostrar un mensaje de error al usuario.
+                });
+        });
+    </script>
     
-    <script type="text/javascript" src="JS/Script.js"></script>
+</body>
 </html>
