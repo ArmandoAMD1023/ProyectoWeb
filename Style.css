@@ -3,10 +3,10 @@
 form {
     width: 250px;
     padding: 20px;
-    background-color: #9bfab0;
-    border: 1px solid #ddd;
+    background-color: rgb(40, 62, 97);
+    border: 2px solid #8f8c8c;
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 1 0 10px rgba(111, 94, 94, 0.1);
     text-align: center;
 }
 
@@ -17,22 +17,22 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-color:   #e4e9e5;
+    background-color:   #738a99;
 }
 
 .Panel {
     width: 300px;
     padding: 20px;
-    background-color: #9bfab0;
-    border: 1px solid #ddd;
+    background-color: rgb(40, 62, 97);
+    border: 2px solid rgb(99, 96, 93);
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
-h2 ,h3{
+label,h2 ,h3{
     text-align: center;
-    color: #333;
+    color: #efefef;
 }
 
 label {
@@ -51,7 +51,7 @@ input {
 button {
     width: 100%;
     padding: 10px;
-    background-color: #2a8c4a;
+    background-color: #738a99;
     color: #fff;
     border: none;
     border-radius: 3px;
@@ -59,7 +59,7 @@ button {
 }
 
 button:hover {
-    background-color: #64c27b;
+    background-color:  rgb(7, 103, 200);;
 }
 
 #result {
@@ -68,7 +68,7 @@ button:hover {
     color: #333;
 }
 img{
-    width: 200px;
+    width: 150px;
     padding: 15px;
 
 }
