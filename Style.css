@@ -4,7 +4,7 @@ form {
     width: 250px;
     padding: 20px;
     background-color: rgb(40, 62, 97);
-    border: 2px solid #8f8c8c;
+    border: 3px solid rgb(99, 96, 93);
     border-radius: 5px;
     box-shadow: 1 0 10px rgba(111, 94, 94, 0.1);
     text-align: center;
@@ -17,17 +17,20 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-color:   #738a99;
+    background-color:    rgb(40, 62, 97);
+    position: relative;
 }
 
 .Panel {
     width: 300px;
     padding: 20px;
     background-color: rgb(40, 62, 97);
-    border: 2px solid rgb(99, 96, 93);
-    border-radius: 5px;
+    border: 5px solid rgb(99, 96, 93);
+    border-radius: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
+    position: relative; /* Ajusta la posición para que esté sobre la imagen de fondo */
+    z-index: 1;
 }
 
 label,h2 ,h3{
@@ -37,7 +40,7 @@ label,h2 ,h3{
 
 label {
     display: block;
-    margin: 10px 0 5px;
+    margin: 8px 0 1px;
 }
 
 input {
@@ -51,7 +54,7 @@ input {
 button {
     width: 100%;
     padding: 10px;
-    background-color: #738a99;
+    background-color:rgb(99, 96, 93);
     color: #fff;
     border: none;
     border-radius: 3px;
@@ -68,7 +71,22 @@ button:hover {
     color: #333;
 }
 img{
-    width: 150px;
-    padding: 15px;
+    width: 140px;
+    padding: 12px;
 
+}
+#img1 {
+    width: 100%;
+    height: 100vh; /* 100% de la altura del viewport */
+    object-fit: cover; /* Cubre el contenedor manteniendo la proporción de aspecto */
+    display: block;
+    margin: 0 auto;
+}
+#img-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }

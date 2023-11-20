@@ -7,8 +7,12 @@
     <title>Inicio de Sesión con Firebase</title>
 </head>
 <body>
+    <div id="img-container">
+        <img id="img1" src="Img/montcarga.jpg" alt="">
+    </div>
+    
     <div class="Panel">
-        <h2>Heca Montacargas Web</h2>
+        <h3>Heca Montacargas Web</h3>
         <img src="img/Logo.jpeg" alt="">
         <h3>Login</h3>
     <form id="login-form">
@@ -66,7 +70,7 @@
                 .catch((error) => {
                     const errorCode = error.code;
                     const errorMessage = error.message;
-                    loginMessage.textContent = `Error al iniciar sesión: ${errorCode} - ${errorMessage}`;
+                    alert(`Inicio de sesión Fallido Compruebe sus Datos`);
                     console.error(errorCode, errorMessage);
                     // Aquí puedes manejar errores, por ejemplo, mostrar un mensaje de error al usuario.
                 });
