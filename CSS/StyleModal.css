@@ -1,3 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Autour+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orelega+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Finger+Paint&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rampart+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Trade+Winds&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Martian+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@1,500&display=swap');
+
 .modal {
   display: none;
   position: fixed;
@@ -11,44 +21,61 @@
 }
 
 .modal-content {
-  background-color: #fefefe;
-  margin: 5% auto;
+  background-color: #fff;
+  margin: 10% auto;
   padding: 20px;
-  border: 1px solid #3f3a3a;
+  border: 2px solid #3f3a3a;
   width: 60%;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out;
-  text-align: center; /* Añadí esta propiedad para centrar el texto */
+  text-align: left; /* Ajustado a "left" para alinear el texto a la izquierda */
+  font-family: 'Arial', sans-serif;
+  max-width: 40%;
 }
 
 .modal-content:hover {
   transform: scale(1.02);
 }
 
-.label {
+label {
   display: block;
-  margin-bottom: 8px; /* Añadí un margen inferior entre los elementos */
+  margin-bottom: 10px;
+  color: black; /* Color azul brillante, puedes cambiarlo según tus preferencias */
+  font-size: 18px; /* Tamaño de fuente más grande */
+  font-weight: bold; /* Texto en negrita */
 }
 
-.input {
-  width: 100%; /* Hice que el ancho sea del 100% para ocupar todo el espacio disponible */
-  padding: 8px;
-  margin-bottom: 16px; /* Añadí un margen inferior para separar los elementos */
+input {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
   box-sizing: border-box;
+  border: 2px solid black; /* Borde resaltado */
+  border-radius: 5px;
+  outline: none; /* Elimina el contorno predeterminado de algunos navegadores */
+  transition: border-color 0.3s; /* Efecto de transición en el color del borde */
+}
+
+input:focus {
+  border-color: #3498db; /* Cambia el color del borde al enfocar el campo */
 }
 
 .close {
-  color: #aaa;
+  color: #555;
   float: right;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: bold;
-  text-align: right;
 }
 
 .close:hover,
 .close:focus {
-  color: black;
+  color: #000;
   text-decoration: none;
   cursor: pointer;
+}
+
+h2{
+  font-family: 'Autour One';
+  text-align: center;
 }
