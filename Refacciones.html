@@ -99,7 +99,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="./Cotizacion.html" class="nav-link active">
+                <a href="./Cotizacion.html" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Cotizaciones</p>
                 </a>
@@ -123,7 +123,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="./Refacciones.html" class="nav-link">
+                <a href="./Refacciones.html" class="nav-link active">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Refacciones</p>
                 </a>
@@ -138,6 +138,12 @@
                 <a href="./Proveedores.html" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>Proveedores</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./EquipoMontacarga.html" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>EquipoMontacarga</p>
                 </a>
               </li>
             </ul>
@@ -179,7 +185,7 @@
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Refacciones</li>
+              <li class="breadcrumb-item active">Details</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -198,29 +204,20 @@
         <span class="close">&times;</span>
         <h2>Nueva Refacción</h2>
         <form id="myForm">
-          <label for="nombre">Nombre:</label>
-          <input type="text" id="nombre" name="nombre" required>
+          <label for="Id_EquipoMontacarga">EquipoMontacarga:</label>
+          <input type="text" id="Id_EquipoMontacarga" name="Id_EquipoMontacarga" required>
           <br>
-          <label for="domicilio">Domicilio:</label>
-          <input type="text" id="domicilio" name="domicilio" required>
+          <label for="Id_Provedor">Proveedor:</label>
+          <input type="text" id="Id_Provedor" name="Id_Provedor" required>
           <br>
-          <label for="colonia">Colonia:</label>
-          <input type="text" id="colonia" name="colonia" required>
+          <label for="DescripcionRefa">Descripción:</label>
+          <input type="text" id="DescripcionRefa" name="DescripcionRefa" required>
           <br>
-          <label for="cPostal">Código postal:</label>
-          <input type="text" id="cPostal" name="cPostal" required>
+          <label for="Costo">Costo:</label>
+          <input type="text" id="Costo" name="Costo" required>
           <br>
-          <label for="nTelefonico">Número telefónico:</label>
-          <input type="text" id="nTelefonico" name="nTelefonico" required>
-          <br>
-          <label for="tipoPersona">Tipo de persona:</label>
-          <input type="text" id="tipoPersona" name="tipoPersona" required>
-          <br>
-          <label for="rfc">RFC:</label>
-          <input type="text" id="rfc" name="rfc" required>
-          <br>
-          <label for="regimen">Régimen:</label>
-          <input type="text" id="regimen" name="regimen" required>
+          <label for="PrecioRefa">Precio:</label>
+          <input type="text" id="PrecioRefa" name="PrecioRefa" required>
           <br>
           <input type="submit" value="Enviar">
         </form>
