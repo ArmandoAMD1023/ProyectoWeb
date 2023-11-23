@@ -29,6 +29,9 @@
   <link rel="stylesheet" href="plugins/summernote/summernote-bs4.min.css">
   <!-- Modal -->
   <link rel="stylesheet" href="CSS/StyleModal.css">
+
+  <!--CSS para tablas-->
+  <link rel="stylesheet" type="text/css" href="CSS/StyleTable.css">
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -194,7 +197,57 @@
     <!-- /.content-header -->
 
     <!-- Main content -->
+    <div class="content">
+      <table class="table" id="tabla-clientes" border="1">
+        <thead>
+            <tr>
+                <th>Modelo</th>
+                <th>Marca</th>
+                <th>Descripcion</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpo-tabla-clientes"></tbody>
+    </table>
+      <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+        import { getFirestore, doc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
+        const firebaseConfig = {
+            apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
+            authDomain: "hecagruas.firebaseapp.com",
+            databaseURL: "https://hecagruas-default-rtdb.firebaseio.com",
+            projectId: "hecagruas",
+            storageBucket: "hecagruas.appspot.com",
+            messagingSenderId: "115599983241",
+            appId: "1:115599983241:web:20a2db6bd320b616c43c58",
+            measurementId: "G-SW2SJC303M"
+        };
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        const db = getFirestore(app);
+        const cuerpoTablaClientes = document.getElementById('cuerpo-tabla-clientes');
+        const dataCollection = collection(db, 'EquipoMontacargas');
+
+        // Obtener todos los documentos de la colección
+        const querySnapshot = await getDocs(dataCollection);
+
+        // Iterar sobre los documentos y mostrar sus datos en una tabla
+        querySnapshot.forEach(async (documento) => {
+          const clienteData = documento.data();
+
+          // Crear una nueva fila de la tabla y agregarla al DOM
+          const fila = document.createElement('tr');
+          fila.innerHTML = `
+              <td>${clienteData.Modelo}</td>
+              <td>${clienteData.Marca}</td>
+              <td>${clienteData.Descripcion}</td>
+          `;
+          cuerpoTablaClientes.appendChild(fila);
+      });
+      </script>
+    </div>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
