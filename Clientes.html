@@ -26,14 +26,82 @@
   <!-- summernote -->
   <link rel="stylesheet" href="plugins/summernote/summernote-bs4.min.css">
   <!-- Modal -->
-  <link rel="stylesheet" href="StyleModal.css">
+  <link rel="stylesheet" href="CSS/StyleModal.css">
+
+  <!--CSS para tablas-->
+  <link rel="stylesheet" type="text/css" href="CSS/StyleTable.css">
+
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+    import { getFirestore, doc, getDoc, getDocs, collection, addDoc  } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+    const firebaseConfig1 = {
+            apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
+            authDomain: "hecagruas.firebaseapp.com",
+            databaseURL: "https://hecagruas-default-rtdb.firebaseio.com",
+            projectId: "hecagruas",
+            storageBucket: "hecagruas.appspot.com",
+            messagingSenderId: "115599983241",
+            appId: "1:115599983241:web:20a2db6bd320b616c43c58",
+            measurementId: "G-SW2SJC303M"
+        };
+        const app1 = initializeApp(firebaseConfig1);
+        const analytics1 = getAnalytics(app1);
+
+        const db1 = getFirestore(app1);
+
+    function agregarCliente() {
+        // Referencia a la colección de clientes
+        const clientesCollection = collection(db1, 'Clientes');
+        const nombre = document.getElementById('nombre').value;
+        const domicilio = document.getElementById('domicilio').value;
+        const colonia = document.getElementById('colonia').value;
+        const cPostal = document.getElementById('cPostal').value;
+        const nTelefonico = document.getElementById('nTelefonico').value;
+        const tipoPersona = document.getElementById('tipoPersona').value;
+        const rfc = document.getElementById('rfc').value;
+        const regimen = document.getElementById('regimen').value;
+
+        const nuevoCliente = {
+          Nombre: nombre,
+          Domicilio: domicilio,
+          Colonia: colonia,
+          Codigo_postal: cPostal,
+          Numero: nTelefonico,
+          Tipo_persona: tipoPersona,
+          RFC: rfc,
+          Regimen: regimen,
+          // Agrega más campos según tus necesidades
+        };
+
+        // Agregar el nuevo cliente a la colección
+        const docRef = addDoc(clientesCollection, nuevoCliente)
+            .then((docRef) => {
+                console.log("Cliente añadido con éxito, ID: ",docRef.id);
+                // Puedes realizar otras acciones después de agregar el cliente
+            })
+            .catch((error) => {
+                console.error("Error al agregar el cliente:", error);
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const enviarBtn = document.getElementById('enviarBtn');
+
+        if (enviarBtn) {
+            enviarBtn.addEventListener('click', agregarCliente);
+        }
+    });
+</script>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
 
   <!-- Preloader -->
   <div class="preloader flex-column justify-content-center align-items-center">
-    <img class="animation__shake" src="img/Logo.jpeg" alt="AdminLTELogo" height="60" width="60">
+    <img class="animation__shake" src="Img/Logo.jpeg" alt="AdminLTELogo" height="60" width="60">
   </div>
 
   <!-- Navbar -->
@@ -191,7 +259,62 @@
     <!-- /.content-header -->
 
     <!-- Main content -->
-    
+    <div class="content">
+      <table class="table" id="tabla-clientes" border="1">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Numero</th>
+                <th>RFC</th>
+                <th>Calle</th>
+                <th>Código postal</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpo-tabla-clientes"></tbody>
+    </table>
+      <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+        import { getFirestore, doc, getDoc, getDocs, collection, addDoc  } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+  
+    const firebaseConfig = {
+            apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
+            authDomain: "hecagruas.firebaseapp.com",
+            databaseURL: "https://hecagruas-default-rtdb.firebaseio.com",
+            projectId: "hecagruas",
+            storageBucket: "hecagruas.appspot.com",
+            messagingSenderId: "115599983241",
+            appId: "1:115599983241:web:20a2db6bd320b616c43c58",
+            measurementId: "G-SW2SJC303M"
+        };
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        const db = getFirestore(app);
+        
+        const cuerpoTablaClientes = document.getElementById('cuerpo-tabla-clientes');
+        const clientesCollection = collection(db, 'Clientes');
+
+        // Obtener todos los documentos de la colección
+        const querySnapshot = await getDocs(clientesCollection);
+
+        // Iterar sobre los documentos y mostrar sus datos en una tabla
+        querySnapshot.forEach((doc) => {
+            const clienteData = doc.data();
+
+            // Crear una nueva fila de la tabla y agregarla al DOM
+            const fila = document.createElement('tr');
+            fila.innerHTML = `<td>${clienteData.Nombre}</td>
+            <td>${clienteData.Numero}</td>
+            <td>${clienteData.RFC}</td>
+            <td>${clienteData.Calle}</td>
+            <td>${clienteData.Codigo_postal}</td>
+            `;
+            cuerpoTablaClientes.appendChild(fila);
+        });
+
+      </script>
+    </div>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
@@ -226,7 +349,7 @@
         <label for="regimen">Régimen:</label>
         <input type="text" id="regimen" name="regimen" required>
         <br>
-        <input type="submit" value="Enviar">
+        <input type="submit" value="Enviar" id="enviarBtn">
       </form>
     </div>
   </div>
@@ -240,7 +363,7 @@
 <!-- ./wrapper -->
 
 <!-- Modal -->
-<script src="ScriptModal.js"></script>
+<script src="JS/ScriptModal.js"></script>
 <!-- jQuery -->
 <script src="plugins/jquery/jquery.min.js"></script>
 <!-- jQuery UI 1.11.4 -->

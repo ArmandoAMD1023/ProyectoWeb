@@ -28,7 +28,10 @@
   <!-- summernote -->
   <link rel="stylesheet" href="plugins/summernote/summernote-bs4.min.css">
   <!-- Modal -->
-  <link rel="stylesheet" href="StyleModal.css">
+  <link rel="stylesheet" href="CSS/StyleModal.css">
+
+  <!--CSS para tablas-->
+  <link rel="stylesheet" type="text/css" href="CSS/StyleTable.css">
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -36,7 +39,7 @@
 
     <!-- Preloader -->
     <div class="preloader flex-column justify-content-center align-items-center">
-      <img class="animation__shake" src="img/Logo.jpeg" alt="AdminLTELogo" height="60" width="60">
+      <img class="animation__shake" src="Img/Logo.jpeg" alt="AdminLTELogo" height="60" width="60">
     </div>
 
     <!-- Navbar -->
@@ -67,8 +70,8 @@
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <!-- Brand Logo -->
-      <a href="index1.html" class="brand-link">
-        <img src="img/Logo.jpeg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+      <a href="Cotizacion.html" class="brand-link">
+        <img src="Img/Logo.jpeg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
         <span class="brand-text font-weight-light">HECA Montacargas</span>
       </a>
 
@@ -194,7 +197,79 @@
     <!-- /.content-header -->
 
     <!-- Main content -->
+    <div class="content">
+      <table class="table" id="tabla-clientes" border="1">
+        <thead>
+            <tr>
+                <th>Descripcion</th>
+                <th>Precio</th>
+                <th>Costo</th>
+                <th>Modelo</th>
+                <th>Nombre proveedor</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpo-tabla-clientes"></tbody>
+    </table>
+      <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+        import { getFirestore, doc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
+        const firebaseConfig = {
+            apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
+            authDomain: "hecagruas.firebaseapp.com",
+            databaseURL: "https://hecagruas-default-rtdb.firebaseio.com",
+            projectId: "hecagruas",
+            storageBucket: "hecagruas.appspot.com",
+            messagingSenderId: "115599983241",
+            appId: "1:115599983241:web:20a2db6bd320b616c43c58",
+            measurementId: "G-SW2SJC303M"
+        };
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+
+        const db = getFirestore(app);
+        const cuerpoTablaClientes = document.getElementById('cuerpo-tabla-clientes');
+        const dataCollection = collection(db, 'Refacciones');
+
+        // Obtener todos los documentos de la colección
+        const querySnapshot = await getDocs(dataCollection);
+
+        // Iterar sobre los documentos y mostrar sus datos en una tabla
+        querySnapshot.forEach(async (documento) => {
+          const clienteData = documento.data();
+
+          const docProv= doc(db, "Proveedores", clienteData.Id_Proveedor);
+          const docSnapProv = await getDoc(docProv);
+
+          let proveedorData = {};
+          if (docSnapProv.exists()) {
+              proveedorData = docSnapProv.data();
+          } else {
+              console.log("No such document!");
+          }
+          const docRef = doc(db, "EquipoMontacargas", clienteData.Id_EquipoMontacargas);
+          const docSnapRef = await getDoc(docRef);
+
+          let refaccionData = {};
+          if (docSnapRef.exists()) {
+              refaccionData = docSnapRef.data();
+          } else {
+              console.log("No such document!");
+          }
+          // Crear una nueva fila de la tabla y agregarla al DOM
+          const fila = document.createElement('tr');
+          fila.innerHTML = `
+              <td>${clienteData.Descripcion}</td>
+              <td>${clienteData.Precio}</td>
+              <td>${clienteData.Costo}</td>
+              <td>${refaccionData.Modelo}</td>
+              <td>${proveedorData.Nombre}</td>
+          `;
+          cuerpoTablaClientes.appendChild(fila);
+      });
+      </script>
+    </div>
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
@@ -233,7 +308,7 @@
   <!-- ./wrapper -->
 
   <!-- Modal -->
-  <script src="ScriptModal.js"></script>
+  <script src="JS/ScriptModal.js"></script>
   <!-- jQuery -->
   <script src="plugins/jquery/jquery.min.js"></script>
   <!-- jQuery UI 1.11.4 -->
