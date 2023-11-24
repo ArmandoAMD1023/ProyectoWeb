@@ -26,7 +26,7 @@
   <!-- summernote -->
   <link rel="stylesheet" href="plugins/summernote/summernote-bs4.min.css">
   <!-- Modal -->
-  <link rel="stylesheet" href="CSS/StyleModal.css">
+  <link rel="stylesheet" href="StyleModalCS.css">
 
   <!--CSS para tablas-->
   <link rel="stylesheet" type="text/css" href="CSS/StyleTable.css">
@@ -272,34 +272,71 @@
     <div id="myModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
-        <h2>Nuevo Servicio</h2>
-        <form id="myForm">
-          <label for="nombre">Nombre:</label>
-          <input type="text" id="nombre" name="nombre" required>
-          <br>
-          <label for="domicilio">Domicilio:</label>
-          <input type="text" id="domicilio" name="domicilio" required>
-          <br>
-          <label for="colonia">Colonia:</label>
-          <input type="text" id="colonia" name="colonia" required>
-          <br>
-          <label for="cPostal">Código postal:</label>
-          <input type="text" id="cPostal" name="cPostal" required>
-          <br>
-          <label for="nTelefonico">Número telefónico:</label>
-          <input type="text" id="nTelefonico" name="nTelefonico" required>
-          <br>
-          <label for="tipoPersona">Tipo de persona:</label>
-          <input type="text" id="tipoPersona" name="tipoPersona" required>
-          <br>
-          <label for="rfc">RFC:</label>
-          <input type="text" id="rfc" name="rfc" required>
-          <br>
-          <label for="regimen">Régimen:</label>
-          <input type="text" id="regimen" name="regimen" required>
-          <br>
-          <input type="submit" value="Enviar">
-        </form>
+    
+        <div id="ticketHeader">
+          <div>
+            
+            <p>Fecha: <span id="ticketFecha"></span></p>
+            <p>ID Servicio: <span id="ticketIdServicio"></span></p>
+            <p>ID Cliente: <span id="ticketIdCliente"></span></p>
+            <form action="">
+              <label for="FechaS">Fecha:</label>
+              <input type="date" id="FechaS" name="FechaS" required>
+              <label for="Id_ClienteS">Id_Cotización:</label>
+              <select name="Id_Cotizacion" required>
+                <option value="v1">v1</option>
+                <option value="v2">v2</option>
+              </select>
+              <label for="Id_ClienteS">ID_Cliente:</label>
+              <select name="Id_ClienteS" required>
+              <option value="v1">v1</option>
+              <option value="v2">v2</option>
+              </select>
+              <br>
+              <input type="submit" value="Registar Servicio">
+            </form>
+          </div>
+          <div class="image-container">
+            <h2>Nuevo Servicio</h2>
+            <img src="Img/Logo.jpeg" alt="Descripción de la imagen">
+          </div>
+          <div>
+            <form id="myForm">
+              <h3>Detalle Servicio</h3>
+              <label for="CantidadS">Cantidad:</label>
+              <input type="number" id="CantidadS" name="CantidadS" required>
+              <label for="Id_RefaccionS">ID Refacción:</label>
+              <select name="Id_RefaccionS" required>
+                <option value="v1">v1</option>
+                <option value="v2">v2</option>
+              </select>
+               <br>
+              <label for="PrecioUS">Precio Unitario:</label>
+              <input type="number" id="PrecioUS" name="PrecioUS" required>
+              <label for="SubTotalS">SubTotal:</label>
+              <input type="number" id="SubTotalS" name="SubTotalS" required>
+              <input type="submit" value="Registar">
+            </form>
+          </div>
+        </div>
+    
+        <table>
+          <thead>
+            <tr>
+              <th>Cantidad</th>
+              <th>ID Refacción</th>
+              <th>Precio Unitario</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Aquí puedes agregar dinámicamente las filas con JavaScript según la entrada del usuario -->
+          </tbody>
+        </table>
+    
+        <div id="total">
+          <p>Total: <span id="totalAmount"></span></p>
+        </div>
       </div>
     </div>
   <!-- Control Sidebar -->
