@@ -32,6 +32,60 @@
 
   <!--CSS para tablas-->
   <link rel="stylesheet" type="text/css" href="CSS/StyleTable.css">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+    const firebaseConfig1 = {
+        apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
+        authDomain: "hecagruas.firebaseapp.com",
+        databaseURL: "https://hecagruas-default-rtdb.firebaseio.com",
+        projectId: "hecagruas",
+        storageBucket: "hecagruas.appspot.com",
+        messagingSenderId: "115599983241",
+        appId: "1:115599983241:web:20a2db6bd320b616c43c58",
+        measurementId: "G-SW2SJC303M"
+    };
+
+    const app1 = initializeApp(firebaseConfig1);
+    const analytics1 = getAnalytics(app1);
+    const db1 = getFirestore(app1);
+
+    function agregarProveedor() {
+        const proveedoresCollection = collection(db1, 'Proveedores');
+        const nombre = document.getElementById('nombreProveedor').value;
+        const domicilio = document.getElementById('domicilioProvedor').value;
+        const nTelefonico = document.getElementById('ntelefonicoProveedor').value;
+        const email = document.getElementById('emailProveedor').value;
+
+        const nuevoProveedor = {
+            Nombre: nombre,
+            Domicilio: domicilio,
+            Numero_Tel: nTelefonico,
+            Correo: email,
+            // Agrega más campos según tus necesidades
+        };
+
+        const docRef = addDoc(proveedoresCollection, nuevoProveedor)
+            .then((docRef) => {
+                console.log("Proveedor añadido con éxito, ID: ", docRef.id);
+                // Puedes realizar otras acciones después de agregar el proveedor
+            })
+            .catch((error) => {
+                console.error("Error al agregar el proveedor:", error);
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const enviarBtn = document.getElementById('enviarBtn');
+
+        if (enviarBtn) {
+            enviarBtn.addEventListener('click', agregarProveedor);
+        }
+    });
+</script>
+
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -272,7 +326,7 @@
         <label for="emailProveedor">Email:</label>
         <input type="email" id="emailProveedor" name="emailProveedor" required>
         <br>
-        <input type="submit" value="Guardar">
+        <input type="submit" value="Guardar" id="enviarBtn">
       </form>
     </div>
   </div>

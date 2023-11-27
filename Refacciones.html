@@ -32,6 +32,84 @@
 
   <!--CSS para tablas-->
   <link rel="stylesheet" type="text/css" href="CSS/StyleTable.css">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+    import { getFirestore, doc, getDoc, getDocs, collection, addDoc  } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+    const firebaseConfig1 = {
+            apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
+            authDomain: "hecagruas.firebaseapp.com",
+            databaseURL: "https://hecagruas-default-rtdb.firebaseio.com",
+            projectId: "hecagruas",
+            storageBucket: "hecagruas.appspot.com",
+            messagingSenderId: "115599983241",
+            appId: "1:115599983241:web:20a2db6bd320b616c43c58",
+            measurementId: "G-SW2SJC303M"
+        };
+    const app1 = initializeApp(firebaseConfig1);
+    const analytics1 = getAnalytics(app1);
+
+    const db1 = getFirestore(app1);
+    
+    function agregarRefaccion() {
+      event.preventDefault();
+
+      // Obtener el valor seleccionado del <select>
+        const selectMontacarga = document.getElementsByName('Id_EquipoMontacarga')[0];
+        const equipoSeleccionado = selectMontacarga.options[selectMontacarga.selectedIndex].text;
+        const equipoSeleccionadoId = selectMontacarga.options[selectMontacarga.selectedIndex].value;
+// Obtener el valor seleccionado del <select>
+  const selectProveedor = document.getElementsByName('Id_Provedor')[0];
+        const proveedorSeleccionado = selectProveedor.options[selectProveedor.selectedIndex].text;
+        const proveedorSeleccionadoId = selectProveedor.options[selectProveedor.selectedIndex].value;
+
+    // Obtén los valores del formulario
+   
+    const resultado = document.getElementById('Id_EquipoMontacarga');
+    const resultado1 = document.getElementById('Id_Provedor');
+    const descripcion = document.getElementById('DescripcionRefa').value;
+    const costo = document.getElementById('Costo').value;
+    const precio = document.getElementById('PrecioRefa').value;
+    
+    if (resultado) {
+    resultado.textContent = equipoSeleccionado;
+    }
+
+    if (resultado1) {
+    resultado1.textContent = proveedorSeleccionado;
+  }
+
+    const refaccionCollection = collection(db1, 'Refacciones');
+    // Agrega la refacción a la base de datos
+    
+    const nuevaRefaccion = {
+            Id_EquipoMontacargas: equipoSeleccionadoId,
+            Id_Proveedor: proveedorSeleccionadoId,
+            Descripcion: descripcion,
+            Costo: costo,
+            Precio: precio
+    };
+
+    const docRef = addDoc(refaccionCollection, nuevaRefaccion)
+            .then((docRef) => {
+                console.log("Refacción añadida con éxito, ID: ",docRef.id);
+                // Puedes realizar otras acciones después de agregar el cliente
+            })
+            .catch((error) => {
+                console.error("Error al agregar la refacción:", error);
+            });
+   
+  }
+  document.addEventListener("DOMContentLoaded", function() {
+        const enviarBtn = document.getElementById('enviarBtn');
+
+        if (enviarBtn) {
+            enviarBtn.addEventListener('click', agregarRefaccion);
+        }
+    });
+    </script>
+
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -268,6 +346,47 @@
           `;
           cuerpoTablaClientes.appendChild(fila);
       });
+
+      //SELECT EQUIPO MONTACARAGA
+      const montacargaCollection = collection(db, 'EquipoMontacargas');
+
+        // Obtener todos los documentos de la colección de clientes
+        const montacargasSnapshot = await getDocs(montacargaCollection);
+
+        // Obtener el elemento <select> por su nombre
+        const selectMontacarga = document.getElementsByName('Id_EquipoMontacarga')[0];
+
+        // Iterar sobre los documentos y agregar opciones al <select>
+        montacargasSnapshot.forEach((doc) => {
+            const montaCargaeData = doc.data();
+
+            // Crear un elemento de opción y agregarlo al <select>
+            const option = document.createElement('option');
+            option.value = doc.id; // Usar el ID del documento como valor
+            option.text = montaCargaeData.NumeroSerie; // Usar el nombre del cliente como texto de la opción
+            selectMontacarga.add(option);
+        });
+
+        //SELECT PROVEEDOR
+        const proveedorCollection = collection(db, 'Proveedores');
+
+        // Obtener todos los documentos de la colección de clientes
+        const proveedoresSnapshot = await getDocs(proveedorCollection);
+
+        // Obtener el elemento <select> por su nombre
+        const selectProveedor = document.getElementsByName('Id_Provedor')[0];
+
+        // Iterar sobre los documentos y agregar opciones al <select>
+        proveedoresSnapshot.forEach((doc) => {
+            const proveedorData = doc.data();
+
+            // Crear un elemento de opción y agregarlo al <select>
+            const option = document.createElement('option');
+            option.value = doc.id; // Usar el ID del documento como valor
+            option.text = proveedorData.Nombre; // Usar el nombre del cliente como texto de la opción
+            selectProveedor.add(option);
+        });
+
       </script>
     </div>
     <!-- /.content -->
@@ -278,12 +397,12 @@
       <div class="modal-content">
         <span class="close">&times;</span>
         <h2>Nueva Refacción</h2>
-        <form id="myForm">
+       <form id="myForm">
           <label for="Id_EquipoMontacarga">Equipo Montacarga:</label>
-          <input type="text" id="Id_EquipoMontacarga" name="Id_EquipoMontacarga" required>
+          <select name="Id_EquipoMontacarga" required></select>
           <br>
           <label for="Id_Provedor">Proveedor:</label>
-          <input type="text" id="Id_Provedor" name="Id_Provedor" required>
+          <select name="Id_Provedor" required></select>
           <br>
           <label for="DescripcionRefa">Descripción:</label>
           <input type="text" id="DescripcionRefa" name="DescripcionRefa" required>
@@ -294,8 +413,9 @@
           <label for="PrecioRefa">Precio:</label>
           <input type="text" id="PrecioRefa" name="PrecioRefa" required>
           <br>
-          <input type="submit" value="Guardar">
-        </form>
+          <input type="submit" value="Guardar" id="enviarBtn">
+      </form>
+
       </div>
     </div>
 

@@ -411,6 +411,7 @@ productosCotizacion.length = 0;
           `;
           cuerpoTablaClientes.appendChild(fila);
       });
+
       const clientesCollection = collection(db, 'Clientes');
 
       // Obtener todos los documentos de la colección de clientes
@@ -480,8 +481,7 @@ productosCotizacion.length = 0;
               <label for="Cantidad">Cantidad:</label>
               <input type="number" id="Cantidad" name="Cantidad" required>
               <label for="Id_Refaccion">Id_Refaccion:</label>
-              <select name="Id_Refaccion" required>
-              </select>
+              <select name="Id_Refaccion" required> </select>
               <br>
               <label for="PrecioU">Precio Unitario:</label>
               <input type="number" id="PrecioU" name="PrecioU" required>
@@ -505,7 +505,7 @@ productosCotizacion.length = 0;
       </table>
   
       <div id="total">
-        <p>Total: <span id="totalAmount">0</span></p>
+        <p>Total $ <span id="totalAmount">0</span></p>
     </div>
 
     </div>

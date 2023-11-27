@@ -30,6 +30,169 @@
 
   <!--CSS para tablas-->
   <link rel="stylesheet" type="text/css" href="CSS/StyleTable.css">
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+    import { getFirestore, doc, getDoc, getDocs, collection, addDoc  } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+
+    const firebaseConfig1 = {
+            apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
+            authDomain: "hecagruas.firebaseapp.com",
+            databaseURL: "https://hecagruas-default-rtdb.firebaseio.com",
+            projectId: "hecagruas",
+            storageBucket: "hecagruas.appspot.com",
+            messagingSenderId: "115599983241",
+            appId: "1:115599983241:web:20a2db6bd320b616c43c58",
+            measurementId: "G-SW2SJC303M"
+        };
+    const app1 = initializeApp(firebaseConfig1);
+    const analytics1 = getAnalytics(app1);
+
+    const db1 = getFirestore(app1);
+
+    const tablaServicioBody = document.getElementById('tablaServicioBody');
+    const totalAmountSpan = document.getElementById('totalAmount');
+    const productosServicio = [];
+
+    function registrarServicio(event) {
+        event.preventDefault(); // Evita que el formulario se envíe de forma predeterminada
+
+        // Obtener el valor seleccionado del <select>
+        const selectClientes = document.getElementsByName('Id_Cliente')[0];
+        const clienteSeleccionado = selectClientes.options[selectClientes.selectedIndex].text;
+        const clienteSeleccionadoId = selectClientes.options[selectClientes.selectedIndex].value;
+        //
+        const selectCotizacion = document.getElementsByName('Id_Cliente')[0];
+        const cotizacionSeleccionado = selectCotizacion.options[selectCotizacion.selectedIndex].text;
+        const cotizacionIDSeleccionadoId = selectCotizacion.options[selectCotizacion.selectedIndex].value;
+
+        const fechaActual = new Date().toISOString().split('T')[0];
+
+        // Deshabilitar el botón después de hacer clic
+        const registrarBtn = document.getElementById('registrarBtn');
+        registrarBtn.disabled = true;
+        // Mostrar el valor seleccionado en la etiqueta con id "resultado"
+        const resultado = document.getElementById('ticketIdCliente');
+        const resutado1 = document.getElementById('ticketCotiacion');
+        const fecha1 = document.getElementById('ticketFecha');
+        const servicioID = document.getElementById('ticketIdServicio');
+        resultado.textContent = clienteSeleccionado;
+        resutado1.textContent = cotizacionSeleccionado;
+        fecha1.textContent = fechaActual;
+
+        const servicioCollection = collection(db1, 'Servicio');
+        
+        const nuevoServicio = {
+          Fecha: fechaActual,
+          Id_Cotizacion:cotizacionIDSeleccionadoId,
+          Id_Cliente: clienteSeleccionadoId,
+          Total_Servicio: parseFloat(totalAmountSpan.textContent)
+          // Agrega más campos según tus necesidades
+        };
+
+        // Agregar el nuevo cliente a la colección
+        const docRef = addDoc(servicioCollection, nuevoServicio)
+            .then((docRef) => {
+                console.log("Servicio añadido con éxito, ID: ",docRef.id);
+                servicioID.textContent = docRef.id
+
+                productosServicio.forEach(async (producto) => {
+                    await agregarProductoServicioFirestore(docRef.id, producto);
+                });
+                // Puedes realizar otras acciones después de agregar el cliente
+            })
+            .catch((error) => {
+                console.error("Error al agregar la cotizacion:", error);
+            });
+      }
+
+
+      //
+        
+        function registrarProducto(event) {
+            // Obtener los valores del formulario
+            const cantidad = document.getElementById('Cantidad').value;
+            const selectRefacciones = document.getElementsByName('Id_Refaccion')[0];
+            const refaccionSeleccionado = selectRefacciones.options[selectRefacciones.selectedIndex].text;
+            const refaccionSeleccionadoId = selectRefacciones.options[selectRefacciones.selectedIndex].value;
+            const precioUnitario = document.getElementById('PrecioU').value;
+            const subtotal = document.getElementById('SubTotal').value;
+
+            // Crear una nueva fila para la tabla
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${cantidad}</td>
+                <td>${refaccionSeleccionado}</td>
+                <td>${precioUnitario}</td>
+                <td>${subtotal}</td>
+            `;
+
+            // Agregar la nueva fila a la tabla
+            tablaServicioBody.appendChild(newRow);
+
+            // Calcular y actualizar el total
+            const totalAmount = calcularTotal();
+            totalAmountSpan.textContent = totalAmount.toFixed(2);
+
+            // Limpiar los campos del formulario
+            limpiarFormulario();
+
+            const productoServicio = {
+            Cantidad: cantidad,
+            Id_Refaccion: refaccionSeleccionadoId,
+            Precio_Unitario: precioUnitario,
+            Subtotal: subtotal
+        };
+
+        // Almacenar el producto en una lista (puedes inicializar esta lista fuera de la función)
+        productosServicio.push(productoServicio);
+        }
+
+        function calcularTotal() {
+            let total = 0;
+            // Iterar sobre las filas de la tabla y sumar los subtotales
+            const rows = tablaServicioBody.querySelectorAll('tr');
+            rows.forEach((row) => {
+                const subtotal = parseFloat(row.querySelector('td:last-child').textContent);
+                total += subtotal;
+            });
+            return total;
+        }
+
+        function limpiarFormulario() {
+            // Limpiar los campos del formulario
+            document.getElementById('myForm').reset();
+        }
+      
+      document.addEventListener("DOMContentLoaded", function() {
+          const registrarBtn = document.getElementById('registrarBtn');
+          const registrarProductoBtn = document.getElementById('registrarProductoBtn');
+
+          if (registrarBtn) {
+              registrarBtn.addEventListener('click', registrarServicio);
+          }
+          if (registrarProductoBtn) {
+            registrarProductoBtn.addEventListener('click', registrarProducto);
+          }
+      });
+
+      async function agregarProductoServicioFirestore(servicioID, producto) {
+          const detalleServicioCollection = collection(db1, 'Servicio', servicioID, 'Detalle_Servicio');
+
+          try {
+              // Agregar el producto a la subcolección
+              await addDoc(detalleServicioCollection, producto);
+              console.log("Producto añadido con éxito al Servicio", servicioID);
+          } catch (error) {
+              console.error("Error al agregar el producto al Servicio:", error);
+          }
+      }
+
+// Limpiar la lista de productos después de agregarlos al serrvicio
+productosServicio.length = 0;
+      
+  </script>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -262,6 +425,59 @@
           `;
           cuerpoTablaClientes.appendChild(fila);
       });
+
+
+      const clientesCollection = collection(db, 'Clientes');
+
+      // Obtener todos los documentos de la colección de clientes
+      const clientesSnapshot = await getDocs(clientesCollection);
+
+      // Obtener el elemento <select> por su nombre
+      const selectClientes = document.getElementsByName('Id_Cliente')[0];
+
+      // Iterar sobre los documentos y agregar opciones al <select>
+      clientesSnapshot.forEach((doc) => {
+          const clienteData = doc.data();
+
+          // Crear un elemento de opción y agregarlo al <select>
+          const option = document.createElement('option');
+          option.value = doc.id; // Usar el ID del documento como valor
+          option.text = clienteData.Nombre; // Usar el nombre del cliente como texto de la opción
+          selectClientes.add(option);
+      });
+      const refaccionesCollection = collection(db, 'Refacciones');
+
+      const refaccionesSnapshot = await getDocs(refaccionesCollection);
+
+      const selectrefacciones = document.getElementsByName('Id_Refaccion')[0];
+
+      refaccionesSnapshot.forEach((doc) => {
+          const refaccionData = doc.data();
+
+          const option = document.createElement('option');
+          option.value = doc.id;
+          option.text = refaccionData.Descripcion; 
+          selectrefacciones.add(option);
+      });
+      const cotizacionCollection = collection(db, 'Cotizacion');
+
+      // Obtener todos los documentos de la colección de clientes
+      const cotizacionesSnapshot = await getDocs(cotizacionCollection);
+
+      // Obtener el elemento <select> por su nombre
+      const selectCotizacion = document.getElementsByName('Id_Cotizacion')[0];
+
+      // Iterar sobre los documentos y agregar opciones al <select>
+      cotizacionesSnapshot.forEach((doc) => {
+          const cotizacionData = doc.data();
+
+          // Crear un elemento de opción y agregarlo al <select>
+          const option = document.createElement('option');
+          option.value = doc.id; // Usar el ID del documento como valor
+          option.text = cotizacionData.Id_Cliente; // Usar el nombre del cliente como texto de la opción
+          selectCotizacion.add(option);
+      });
+
       </script>
     </div>
     <!-- /.content -->
@@ -272,28 +488,23 @@
     <div id="myModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
-    
         <div id="ticketHeader">
           <div>
             
             <p>Fecha: <span id="ticketFecha"></span></p>
             <p>ID Servicio: <span id="ticketIdServicio"></span></p>
-            <p>ID Cliente: <span id="ticketIdCliente"></span></p>
+            <p>ID Cotizacion: <span id="ticketCotiacion"></span></p>
+            <p>Nombre Cliente: <span id="ticketIdCliente"></span></p>
             <form action="">
               <label for="FechaS">Fecha:</label>
               <input type="date" id="FechaS" name="FechaS" required>
               <label for="Id_ClienteS">Id_Cotización:</label>
-              <select name="Id_Cotizacion" required>
-                <option value="v1">v1</option>
-                <option value="v2">v2</option>
-              </select>
-              <label for="Id_ClienteS">ID_Cliente:</label>
-              <select name="Id_ClienteS" required>
-              <option value="v1">v1</option>
-              <option value="v2">v2</option>
-              </select>
-              <br>
-              <input type="submit" value="Registar Servicio">
+              <select name="Id_Cotizacion"></select>
+              <br></br>
+              <label for="Id_Cliente">Nombre Cliente:</label>
+              <select name="Id_Cliente" required></select>
+              <br><br/>
+              <input type="submit" value="Registar Servicio"id="registrarBtn">
             </form>
           </div>
           <div class="image-container">
@@ -303,19 +514,16 @@
           <div>
             <form id="myForm">
               <h3>Detalle Servicio</h3>
-              <label for="CantidadS">Cantidad:</label>
-              <input type="number" id="CantidadS" name="CantidadS" required>
-              <label for="Id_RefaccionS">ID Refacción:</label>
-              <select name="Id_RefaccionS" required>
-                <option value="v1">v1</option>
-                <option value="v2">v2</option>
-              </select>
+              <label for="Cantidad">Cantidad:</label>
+              <input type="number" id="Cantidad" name="Cantidad" required>
+              <label for="Id_Refaccion">ID Refacción:</label>
+              <select name="Id_Refaccion" required></select>
                <br>
-              <label for="PrecioUS">Precio Unitario:</label>
-              <input type="number" id="PrecioUS" name="PrecioUS" required>
+              <label for="PrecioU">Precio Unitario:</label>
+              <input type="number" id="PrecioU" name="PrecioUS" required>
               <label for="SubTotalS">SubTotal:</label>
-              <input type="number" id="SubTotalS" name="SubTotalS" required>
-              <input type="submit" value="Registar">
+              <input type="number" id="SubTotal" name="SubTotal" required>
+              <input type="submit" value="Registar" id="registrarProductoBtn">
             </form>
           </div>
         </div>
@@ -329,13 +537,11 @@
               <th>Subtotal</th>
             </tr>
           </thead>
-          <tbody>
-            <!-- Aquí puedes agregar dinámicamente las filas con JavaScript según la entrada del usuario -->
-          </tbody>
+          <tbody id="tablaServicioBody"> </tbody>
         </table>
     
         <div id="total">
-          <p>Total: <span id="totalAmount"></span></p>
+          <p>Total $ <span id="totalAmount">0</span></p>
         </div>
       </div>
     </div>
