@@ -322,36 +322,46 @@
         const querySnapshot = await getDocs(dataCollection);
 
            // Función para eliminar un proveedor
-     async function eliminarProveedor(id) {
+           async function eliminarProveedor(id) {
     try {
-      const proveedorRef = doc(dataCollection, id);
-      
-      // Verificar si el documento existe antes de intentar eliminarlo
-      const proveedorDoc = await getDoc(proveedorRef);
-      if (!proveedorDoc.exists()) {
-        console.log("La refaccion con el ID", id, "no existe.");
+        if (!id) {
+            console.error("ID de la refacción no válido.");
+            return;
+        }
+
+        const proveedorRef = doc(dataCollection, id);
+        const proveedorDoc = await getDoc(proveedorRef);
+
+        if (!proveedorDoc.exists()) {
+            console.log("La refaccion con el ID", id, "no existe.");
+            return;
+        }
+
+        const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar esta refaccion?");
+        if (!confirmacion) {
+            return;
+        }
+
+        await deleteDoc(proveedorRef);
+        console.log("Refaccion eliminada con éxito");
+        alert("Refaccion eliminada con éxito");
+
+        // Actualizar la tabla después de eliminar sin recargar la página
+        // cuerpoTablaClientes.removeChild(document.getElementById(id));
         return;
-      }
-
-      // Confirmación antes de eliminar
-      const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar esta refaccion?");
-      if (!confirmacion) {
-        return;
-      }
-
-      // Eliminar el documento en Firestore
-      await deleteDoc(proveedorRef);
-      console.log("Refaccion eliminado con éxito");
-      alert("Refaccion eliminado con éxito");
-
-      // Actualizar la tabla después de eliminar sin recargar la página
-      //cuerpoTablaClientes.removeChild(document.getElementById(id));
-      return;
     } catch (error) {
-      console.error("Error al eliminar el refaccion:", error);
-      alert("Error al eliminar la refaccion");
+        console.error("Error al eliminar la refaccion:", error);
+
+        // Agrega un manejo de errores específico para determinar la causa del problema
+        if (error.code === 'permission-denied') {
+            console.error("Permiso denegado. Verifica los permisos en Firestore.");
+        }
+
+        alert("Error al eliminar la refaccion");
     }
-  }
+}
+
+
         // Iterar sobre los documentos y mostrar sus datos en una tabla
         querySnapshot.forEach(async (documento) => {
           const clienteData = documento.data();
@@ -390,7 +400,8 @@
             cuerpoTablaClientes.appendChild(fila);
 
             const eliminarRefaccionButton = fila.querySelector('.eliminarRefaccionButton');
-            eliminarRefaccionButton.addEventListener('click', () => eliminarProveedor(doc.id));
+            eliminarRefaccionButton.addEventListener('click', () => eliminarProveedor(clienteData.Id_Refaccion));
+
             
             const editarRefaccionButton = fila.querySelector('.editarRefaccionButton');
             editarRefaccionButton.addEventListener('click', () => editarProveedor(doc.id));

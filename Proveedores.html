@@ -353,29 +353,6 @@
           alert("Error al eliminar al proveedor");
         }
       }
-<<<<<<< HEAD
-
-      // Confirmación antes de eliminar
-      const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este proveedor?");
-      if (!confirmacion) {
-        return;
-      }
-
-      // Eliminar el documento en Firestore
-      await deleteDoc(proveedorRef);
-      console.log("Proveedor eliminado con éxito");
-      alert("Proveedor eliminado con éxito");
-
-      // Actualizar la tabla después de eliminar sin recargar la página
-      //cuerpoTablaClientes.removeChild(document.getElementById(id));
-      return;
-    } catch (error) {
-      console.error("Error al eliminar el proveedor:", error);
-      alert("Error al eliminar al proveedor");
-    }
-  }
-=======
->>>>>>> 3ed1cea62a03a8613e8622fb3c6a6c9dd3b89315
         // Iterar sobre los documentos y mostrar sus datos en una tabla
         querySnapshot.forEach((doc) => {
             const clienteData = doc.data();
