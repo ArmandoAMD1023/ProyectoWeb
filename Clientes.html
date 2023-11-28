@@ -274,6 +274,7 @@
                 <th>RFC</th>
                 <th>Calle</th>
                 <th>Código postal</th>
+                <th>Acciones</th> <!-- Nuevo campo para acciones -->
             </tr>
         </thead>
         <tbody id="cuerpo-tabla-clientes"></tbody>
@@ -315,6 +316,9 @@
             <td>${clienteData.RFC}</td>
             <td>${clienteData.Calle}</td>
             <td>${clienteData.Codigo_postal}</td>
+            <td>
+            <img src="Img/borrar.png" alt="Eliminar" onclick="eliminarCliente('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
+            </td>
             `;
             cuerpoTablaClientes.appendChild(fila);
         });

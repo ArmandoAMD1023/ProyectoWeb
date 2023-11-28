@@ -267,6 +267,7 @@
             <th>Modelo</th>
             <th>Marca</th>
             <th>Descripcion</th>
+            <th>Acciones</th> <!-- Nuevo campo para acciones -->
           </tr>
         </thead>
         <tbody id="cuerpo-tabla-clientes"></tbody>
@@ -307,6 +308,9 @@
               <td>${clienteData.Modelo}</td>
               <td>${clienteData.Marca}</td>
               <td>${clienteData.Descripcion}</td>
+              <td>
+            <img src="Img/borrar.png" alt="Eliminar" onclick="eliminarMontacarga('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
+            </td>
           `;
           cuerpoTablaClientes.appendChild(fila);
         });

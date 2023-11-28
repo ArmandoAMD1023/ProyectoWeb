@@ -121,6 +121,9 @@
                 <td>${refaccionSeleccionado}</td>
                 <td>${precioUnitario}</td>
                 <td>${subtotal}</td>
+                <td>
+            <img src="Img/borrar.png" alt="Eliminar" onclick="eliminarProductoC('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
+            </td>
             `;
 
             // Agregar la nueva fila a la tabla
@@ -363,6 +366,7 @@ productosCotizacion.length = 0;
                 <th>Fecha</th>
                 <th>Cliente</th>
                 <th>Total</th>
+                <th>Acciones</th> <!-- Nuevo campo para acciones -->
             </tr>
         </thead>
         <tbody id="cuerpo-tabla-clientes"></tbody>
@@ -412,6 +416,9 @@ productosCotizacion.length = 0;
               <td>${clienteData.Fecha}</td>
               <td>${key1Data.Nombre}</td>
               <td>${clienteData.Total_Cotizacion}</td>
+              <td>
+            <img src="Img/borrar.png" alt="Eliminar" onclick="eliminarCotizacion('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
+            </td>
           `;
           cuerpoTablaClientes.appendChild(fila);
       });
@@ -503,6 +510,7 @@ productosCotizacion.length = 0;
             <th>Descripción Refacción</th>
             <th>Precio Unitario</th>
             <th>Subtotal</th>
+            <th>Acciones</th> <!-- Nuevo campo para acciones -->
           </tr>
         </thead>
         <tbody id="tablaCotizacionBody"></tbody>

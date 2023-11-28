@@ -291,6 +291,7 @@
                 <th>Costo</th>
                 <th>Modelo</th>
                 <th>Nombre proveedor</th>
+                <th>Acciones</th> <!-- Nuevo campo para acciones -->
             </tr>
         </thead>
         <tbody id="cuerpo-tabla-clientes"></tbody>
@@ -350,6 +351,9 @@
               <td>${clienteData.Costo}</td>
               <td>${refaccionData.Modelo}</td>
               <td>${proveedorData.Nombre}</td>
+              <td>
+            <img src="Img/borrar.png" alt="Eliminar" onclick="eliminarRefaccion('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
+            </td>
           `;
           cuerpoTablaClientes.appendChild(fila);
       });
