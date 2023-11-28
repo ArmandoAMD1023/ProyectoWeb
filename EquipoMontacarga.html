@@ -335,17 +335,17 @@ async function eliminarEquipo(id) {
               <td>${clienteData.Marca}</td>
               <td>${clienteData.Descripcion}</td>
               <td>
-                    <img src="Img/borrar.png" alt="Eliminar" class="eliminarEquipoButton" data-doc-id="${doc.id}" style="width: 20px; height: 20px; cursor: pointer;">
-                    <img src="Img/editar.png" alt="Editar" class="editarEquipoButton" data-doc-id="${doc.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                    <img src="Img/borrar.png" alt="Eliminar" class="eliminarEquipoButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                    <img src="Img/editar.png" alt="Editar" class="editarEquipoButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
                 </td>
             `;
             cuerpoTablaClientes.appendChild(fila);
 
             const eliminarEquipoButton = fila.querySelector('.eliminarEquipoButton');
-            eliminarEquipoButton.addEventListener('click', () => eliminarEquipo(doc.id));
+            eliminarEquipoButton.addEventListener('click', () => eliminarEquipo(documento.id));
             
             const editarEquipoButton = fila.querySelector('.editarEquipoButton');
-            editarEquipoButton.addEventListener('click', () => editarProveedor(doc.id));
+            editarEquipoButton.addEventListener('click', () => editarProveedor(documento.id));
         });
       </script>
     </div>

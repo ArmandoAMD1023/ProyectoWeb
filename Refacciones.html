@@ -346,6 +346,7 @@
         console.log("Refaccion eliminada con éxito");
         alert("Refaccion eliminada con éxito");
 
+        location.reload();
         // Actualizar la tabla después de eliminar sin recargar la página
         // cuerpoTablaClientes.removeChild(document.getElementById(id));
         return;
@@ -393,18 +394,18 @@
               <td>${refaccionData.Modelo}</td>
               <td>${proveedorData.Nombre}</td>
               <td>
-                    <img src="Img/borrar.png" alt="Eliminar" class="eliminarRefaccionButton" data-doc-id="${doc.id}" style="width: 20px; height: 20px; cursor: pointer;">
-                    <img src="Img/editar.png" alt="Editar" class="editarRefaccionButton" data-doc-id="${doc.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                    <img src="Img/borrar.png" alt="Eliminar" class="eliminarRefaccionButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                    <img src="Img/editar.png" alt="Editar" class="editarRefaccionButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
                 </td>
             `;
             cuerpoTablaClientes.appendChild(fila);
 
             const eliminarRefaccionButton = fila.querySelector('.eliminarRefaccionButton');
-            eliminarRefaccionButton.addEventListener('click', () => eliminarProveedor(clienteData.Id_Refaccion));
+            eliminarRefaccionButton.addEventListener('click', () => eliminarProveedor(documento.id));
 
             
             const editarRefaccionButton = fila.querySelector('.editarRefaccionButton');
-            editarRefaccionButton.addEventListener('click', () => editarProveedor(doc.id));
+            editarRefaccionButton.addEventListener('click', () => editarProveedor(documento.id));
       });
 
       //SELECT EQUIPO MONTACARAGA
