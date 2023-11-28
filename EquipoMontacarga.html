@@ -275,7 +275,7 @@
       <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
-        import { getFirestore, doc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, getDocs, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
@@ -296,6 +296,40 @@
 
         // Obtener todos los documentos de la colección
         const querySnapshot = await getDocs(dataCollection);
+         // Función para eliminar un proveedor
+         async function eliminarProveedor(id) {
+    try {
+        const proveedorRef = doc(dataCollection, id);
+        const proveedorDoc = await getDoc(proveedorRef);
+
+        if (!proveedorDoc.exists()) {
+            console.log("El Equipo Monta Carga con el ID", id, "no existe.");
+            return;
+        }
+
+        const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este equipo?");
+        if (!confirmacion) {
+            return;
+        }
+
+        await deleteDoc(proveedorRef);
+        console.log("Equipo Monta Carga eliminado con éxito");
+        alert("Equipo Monta Carga eliminado con éxito");
+
+        // Actualizar la tabla después de eliminar sin recargar la página
+        //cuerpoTablaClientes.removeChild(document.getElementById(id));
+        return;
+    } catch (error) {
+        console.error("Error al eliminar el Equipo Monta Carga:", error);
+
+        // Agrega un manejo de errores específico para determinar la causa del problema
+        if (error.code === 'permission-denied') {
+            console.error("Permiso denegado. Verifica los permisos en Firestore.");
+        }
+
+        alert("Error al eliminar al Equipo Monta Carga");
+    }
+}
 
         // Iterar sobre los documentos y mostrar sus datos en una tabla
         querySnapshot.forEach(async (documento) => {
@@ -309,11 +343,17 @@
               <td>${clienteData.Marca}</td>
               <td>${clienteData.Descripcion}</td>
               <td>
-            <img src="Img/borrar.png" alt="Eliminar" onclick="eliminarMontacarga('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
-            <img src="Img/editar.png" alt="Editar" onclick="actualizarMontacarga('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
-            </td>
-          `;
-          cuerpoTablaClientes.appendChild(fila);
+                    <img src="Img/borrar.png" alt="Eliminar" class="eliminarEquipoButton" data-doc-id="${doc.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                    <img src="Img/editar.png" alt="Editar" class="editarEquipoButton" data-doc-id="${doc.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                </td>
+            `;
+            cuerpoTablaClientes.appendChild(fila);
+
+            const eliminarEquipoButton = fila.querySelector('.eliminarEquipoButton');
+            eliminarEquipoButton.addEventListener('click', () => eliminarProveedor(doc.id));
+            
+            const editarEquipoButton = fila.querySelector('.editarEquipoButton');
+            editarEquipoButton.addEventListener('click', () => editarProveedor(doc.id));
         });
       </script>
     </div>

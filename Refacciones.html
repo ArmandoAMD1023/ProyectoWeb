@@ -299,7 +299,7 @@
       <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
-        import { getFirestore, doc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, getDocs, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
@@ -321,6 +321,37 @@
         // Obtener todos los documentos de la colección
         const querySnapshot = await getDocs(dataCollection);
 
+           // Función para eliminar un proveedor
+     async function eliminarProveedor(id) {
+    try {
+      const proveedorRef = doc(dataCollection, id);
+      
+      // Verificar si el documento existe antes de intentar eliminarlo
+      const proveedorDoc = await getDoc(proveedorRef);
+      if (!proveedorDoc.exists()) {
+        console.log("La refaccion con el ID", id, "no existe.");
+        return;
+      }
+
+      // Confirmación antes de eliminar
+      const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar esta refaccion?");
+      if (!confirmacion) {
+        return;
+      }
+
+      // Eliminar el documento en Firestore
+      await deleteDoc(proveedorRef);
+      console.log("Refaccion eliminado con éxito");
+      alert("Refaccion eliminado con éxito");
+
+      // Actualizar la tabla después de eliminar sin recargar la página
+      //cuerpoTablaClientes.removeChild(document.getElementById(id));
+      return;
+    } catch (error) {
+      console.error("Error al eliminar el refaccion:", error);
+      alert("Error al eliminar la refaccion");
+    }
+  }
         // Iterar sobre los documentos y mostrar sus datos en una tabla
         querySnapshot.forEach(async (documento) => {
           const clienteData = documento.data();
@@ -352,11 +383,17 @@
               <td>${refaccionData.Modelo}</td>
               <td>${proveedorData.Nombre}</td>
               <td>
-            <img src="Img/borrar.png" alt="Eliminar" onclick="eliminarRefaccion('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
-            <img src="Img/editar.png" alt="Editar" onclick="actualizarRefaccion('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
-            </td>
-          `;
-          cuerpoTablaClientes.appendChild(fila);
+                    <img src="Img/borrar.png" alt="Eliminar" class="eliminarRefaccionButton" data-doc-id="${doc.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                    <img src="Img/editar.png" alt="Editar" class="editarRefaccionButton" data-doc-id="${doc.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                </td>
+            `;
+            cuerpoTablaClientes.appendChild(fila);
+
+            const eliminarRefaccionButton = fila.querySelector('.eliminarRefaccionButton');
+            eliminarRefaccionButton.addEventListener('click', () => eliminarProveedor(doc.id));
+            
+            const editarRefaccionButton = fila.querySelector('.editarRefaccionButton');
+            editarRefaccionButton.addEventListener('click', () => editarProveedor(doc.id));
       });
 
       //SELECT EQUIPO MONTACARAGA
