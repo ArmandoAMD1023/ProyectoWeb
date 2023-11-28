@@ -96,14 +96,15 @@
             .then((docRef) => {
                 console.log("Servicio añadido con éxito, ID: ",docRef.id);
                 servicioID.textContent = docRef.id
-
+                alert("Servicio añadido con éxito, ID: " + docRef.id);
                 productosServicio.forEach(async (producto) => {
                     await agregarProductoServicioFirestore(docRef.id, producto);
                 });
                 // Puedes realizar otras acciones después de agregar el cliente
             })
             .catch((error) => {
-                console.error("Error al agregar la cotizacion:", error);
+                console.error("Error al agregar el servicio:", error);
+                alert("Error al agregar el servicio");
             });
       }
 
@@ -171,6 +172,7 @@
 
           if (registrarBtn) {
               registrarBtn.addEventListener('click', registrarServicio);
+              
           }
           if (registrarProductoBtn) {
             registrarProductoBtn.addEventListener('click', registrarProducto);
@@ -184,8 +186,10 @@
               // Agregar el producto a la subcolección
               await addDoc(detalleServicioCollection, producto);
               console.log("Producto añadido con éxito al Servicio", servicioID);
+              alert("Producto añadido con éxito al servicio" );
           } catch (error) {
               console.error("Error al agregar el producto al Servicio:", error);
+              alert("Error al agregar el producto al servicio");
           }
       }
 

@@ -80,13 +80,19 @@
         const docRef = addDoc(clientesCollection, nuevoCliente)
             .then((docRef) => {
                 console.log("Cliente añadido con éxito, ID: ",docRef.id);
+                alert("Cliente añadido con éxito, ID: " + docRef.id);
                 // Puedes realizar otras acciones después de agregar el cliente
+                location.reload();
             })
             .catch((error) => {
                 console.error("Error al agregar el cliente:", error);
+                alert("Error al agregar el cliente");
             });
     }
-
+    function limpiarFormulario() {
+            // Limpiar los campos del formulario
+            document.getElementById('myForm').reset();
+        }
     document.addEventListener("DOMContentLoaded", function() {
         const enviarBtn = document.getElementById('enviarBtn');
 

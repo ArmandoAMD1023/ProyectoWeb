@@ -87,7 +87,8 @@
         // Agregar el nuevo cliente a la colección
         const docRef = addDoc(cotizacionCollection, nuevaCotizacion)
             .then((docRef) => {
-                console.log("Cliente añadido con éxito, ID: ",docRef.id);
+                console.log("Cotizacion añadido con éxito, ID: ",docRef.id);
+                alert("Cotizacion añadido con éxito, ID: " + docRef.id);
                 cotizacionID.textContent = docRef.id
 
                 productosCotizacion.forEach(async (producto) => {
@@ -97,6 +98,7 @@
             })
             .catch((error) => {
                 console.error("Error al agregar el cliente:", error);
+                alert("Error al agregar la cotizacion");
             });
       }
 
@@ -176,9 +178,11 @@
           try {
               // Agregar el producto a la subcolección
               await addDoc(detalleCotizacionCollection, producto);
-              console.log("Producto añadido con éxito a la cotización", cotizacionID);
-          } catch (error) {
+              console.log("Producto añadido con éxito a la cotización. ", cotizacionID);
+              alert("Producto añadido con éxito a la cotización" );
+            } catch (error) {
               console.error("Error al agregar el producto a la cotización:", error);
+              alert("Error al agregar el producto a la cotización");
           }
       }
 

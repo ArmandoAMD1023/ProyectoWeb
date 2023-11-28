@@ -53,7 +53,7 @@
     const db1 = getFirestore(app1);
     
     function agregarRefaccion() {
-      event.preventDefault();
+      
 
       // Obtener el valor seleccionado del <select>
         const selectMontacarga = document.getElementsByName('Id_EquipoMontacarga')[0];
@@ -94,13 +94,20 @@
     const docRef = addDoc(refaccionCollection, nuevaRefaccion)
             .then((docRef) => {
                 console.log("Refacción añadida con éxito, ID: ",docRef.id);
+                alert("Refacción añadida con éxito, ID: " + docRef.id);
+                location.reload();
                 // Puedes realizar otras acciones después de agregar el cliente
             })
             .catch((error) => {
                 console.error("Error al agregar la refacción:", error);
+                alert("Error al agregar la refaccion");
             });
    
   }
+  function limpiarFormulario() {
+            // Limpiar los campos del formulario
+            document.getElementById('myForm').reset();
+        }
   document.addEventListener("DOMContentLoaded", function() {
         const enviarBtn = document.getElementById('enviarBtn');
 

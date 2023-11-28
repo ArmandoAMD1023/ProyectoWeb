@@ -71,11 +71,18 @@
             const docRef = addDoc(equiposCollection, nuevoEquipo)
                 .then((docRef) => {
                     console.log("Equipo Montacarga añadido con éxito, ID: ", docRef.id);
+                    alert("Equipo Montacarga añadido con éxito, ID: " + docRef.id);
                     // Puedes realizar otras acciones después de agregar el equipo montacarga
+                    location.reload();
                 })
                 .catch((error) => {
-                    console.error("Error al agregar el equipo montacarga:", error);
+                    console.error("Error al agregar el equipo montagas:", error);
+                    alert("Error al agregar el equipoMontacargas");
                 });
+        }
+        function limpiarFormulario() {
+            // Limpiar los campos del formulario
+            document.getElementById('myForm').reset();
         }
 
         document.addEventListener("DOMContentLoaded", function() {
