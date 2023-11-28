@@ -327,14 +327,12 @@
      async function eliminarProveedor(id) {
         try {
           const proveedorRef = doc(dataCollection, id);
-          
           // Verificar si el documento existe antes de intentar eliminarlo
           const proveedorDoc = await getDoc(proveedorRef);
           if (!proveedorDoc.exists()) {
             console.log("El proveedor con el ID", id, "no existe.");
             return;
           }
-
           // Confirmación antes de eliminar
           const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este proveedor?");
           if (!confirmacion) {

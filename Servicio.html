@@ -158,7 +158,7 @@
             // Iterar sobre las filas de la tabla y sumar los subtotales
             const rows = tablaServicioBody.querySelectorAll('tr');
             rows.forEach((row) => {
-                const subtotal = parseFloat(row.querySelector('td:last-child').textContent);
+                const subtotal = parseFloat(row.querySelector('td:nth-last-child(2)').textContent);
                 total += subtotal;
             });
             return total;
@@ -379,7 +379,7 @@ productosServicio.length = 0;
       <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
-        import { getFirestore, doc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, getDocs, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
@@ -400,6 +400,32 @@ productosServicio.length = 0;
 
         // Obtener todos los documentos de la colección
         const querySnapshot = await getDocs(dataCollection);
+
+        async function eliminarServicio(id) {
+        try {
+          const servicioRef = doc(dataCollection, id);
+          // Verificar si el documento existe antes de intentar eliminarlo
+          const servicioDoc = await getDoc(servicioRef);
+          if (!servicioDoc.exists()) {
+            console.log("El servicio con el ID", id, "no existe.");
+            return;
+          }
+          // Confirmación antes de eliminar
+          const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este servicio?");
+          if (!confirmacion) {
+            return;
+          }
+          // Eliminar el documento en Firestore
+          await deleteDoc(servicioRef);
+          console.log("Servicio eliminado con éxito");
+          alert("Servicio eliminado con éxito");
+          location.reload();
+          return;
+        } catch (error) {
+          console.error("Error al eliminar el servicio:", error);
+          alert("Error al eliminar al servicio");
+        }
+      }
 
         // Iterar sobre los documentos y mostrar sus datos en una tabla
         querySnapshot.forEach(async (documento) => {
@@ -431,26 +457,28 @@ productosServicio.length = 0;
               <td>${key1Data.Nombre}</td>
               <td>${clienteData.Total_Servicio}</td>
               <td>
-            <img src="Img/borrar.png" alt="Eliminar" onclick="eliminarServicio('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
-            <img src="Img/editar.png" alt="Editar" onclick="actualizarServicio('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
-            </td>
+                <img src="Img/borrar.png" alt="Eliminar" class="eliminarServicioButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
+              </td>
           `;
+          //<img src="Img/editar.png" alt="Editar" class="editarServicioButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
+              
           cuerpoTablaClientes.appendChild(fila);
+
+          const eliminarServicioButton = fila.querySelector('.eliminarServicioButton');
+          eliminarServicioButton.addEventListener('click', () => eliminarServicio(documento.id));
+          
+          //const editarServicioButton = fila.querySelector('.editarServicioButton');
+          //editarServicioButton.addEventListener('click', () => editarProveedor(doc.id));
       });
 
-
       const clientesCollection = collection(db, 'Clientes');
-
       // Obtener todos los documentos de la colección de clientes
       const clientesSnapshot = await getDocs(clientesCollection);
-
       // Obtener el elemento <select> por su nombre
       const selectClientes = document.getElementsByName('Id_Cliente')[0];
-
       // Iterar sobre los documentos y agregar opciones al <select>
       clientesSnapshot.forEach((doc) => {
           const clienteData = doc.data();
-
           // Crear un elemento de opción y agregarlo al <select>
           const option = document.createElement('option');
           option.value = doc.id; // Usar el ID del documento como valor
@@ -458,11 +486,8 @@ productosServicio.length = 0;
           selectClientes.add(option);
       });
       const refaccionesCollection = collection(db, 'Refacciones');
-
       const refaccionesSnapshot = await getDocs(refaccionesCollection);
-
       const selectrefacciones = document.getElementsByName('Id_Refaccion')[0];
-
       refaccionesSnapshot.forEach((doc) => {
           const refaccionData = doc.data();
 
@@ -472,24 +497,19 @@ productosServicio.length = 0;
           selectrefacciones.add(option);
       });
       const cotizacionCollection = collection(db, 'Cotizacion');
-
       // Obtener todos los documentos de la colección de clientes
       const cotizacionesSnapshot = await getDocs(cotizacionCollection);
-
       // Obtener el elemento <select> por su nombre
       const selectCotizacion = document.getElementsByName('Id_Cotizacion')[0];
-
       // Iterar sobre los documentos y agregar opciones al <select>
       cotizacionesSnapshot.forEach((doc) => {
           const cotizacionData = doc.data();
-
           // Crear un elemento de opción y agregarlo al <select>
           const option = document.createElement('option');
           option.value = doc.id; // Usar el ID del documento como valor
           option.text = cotizacionData.Id_Cliente; // Usar el nombre del cliente como texto de la opción
           selectCotizacion.add(option);
       });
-
       </script>
     </div>
     <!-- /.content -->
