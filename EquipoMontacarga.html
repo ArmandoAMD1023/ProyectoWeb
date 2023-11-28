@@ -296,40 +296,32 @@
 
         // Obtener todos los documentos de la colección
         const querySnapshot = await getDocs(dataCollection);
-         // Función para eliminar un proveedor
-         async function eliminarProveedor(id) {
-    try {
-        const proveedorRef = doc(dataCollection, id);
-        const proveedorDoc = await getDoc(proveedorRef);
-
-        if (!proveedorDoc.exists()) {
-            console.log("El Equipo Monta Carga con el ID", id, "no existe.");
+         // Función para eliminar un euipo
+async function eliminarEquipo(id) {
+        try {
+          const servicioRef = doc(dataCollection, id);
+          // Verificar si el documento existe antes de intentar eliminarlo
+          const servicioDoc = await getDoc(servicioRef);
+          if (!servicioDoc.exists()) {
+            console.log("El Equipo Monta Carga con el ID", id, "no existe..");
             return;
-        }
-
-        const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este equipo?");
-        if (!confirmacion) {
+          }
+          // Confirmación antes de eliminar
+          const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este equipo?");
+          if (!confirmacion) {
             return;
-        }
-
-        await deleteDoc(proveedorRef);
-        console.log("Equipo Monta Carga eliminado con éxito");
+          }
+          // Eliminar el documento en Firestore
+          await deleteDoc(servicioRef);
+          console.log("Equipo Monta Carga eliminado con éxito");
         alert("Equipo Monta Carga eliminado con éxito");
-
-        // Actualizar la tabla después de eliminar sin recargar la página
-        //cuerpoTablaClientes.removeChild(document.getElementById(id));
-        return;
-    } catch (error) {
-        console.error("Error al eliminar el Equipo Monta Carga:", error);
-
-        // Agrega un manejo de errores específico para determinar la causa del problema
-        if (error.code === 'permission-denied') {
-            console.error("Permiso denegado. Verifica los permisos en Firestore.");
+          location.reload();
+          return;
+        } catch (error) {
+          console.error("Error al eliminar el Equipo Monta Carga:", error);
+          alert("Error al eliminar el Equipo Monta Carga");
         }
-
-        alert("Error al eliminar al Equipo Monta Carga");
-    }
-}
+      }
 
         // Iterar sobre los documentos y mostrar sus datos en una tabla
         querySnapshot.forEach(async (documento) => {
@@ -350,7 +342,7 @@
             cuerpoTablaClientes.appendChild(fila);
 
             const eliminarEquipoButton = fila.querySelector('.eliminarEquipoButton');
-            eliminarEquipoButton.addEventListener('click', () => eliminarProveedor(doc.id));
+            eliminarEquipoButton.addEventListener('click', () => eliminarEquipo(doc.id));
             
             const editarEquipoButton = fila.querySelector('.editarEquipoButton');
             editarEquipoButton.addEventListener('click', () => editarProveedor(doc.id));
