@@ -374,7 +374,7 @@ productosCotizacion.length = 0;
       <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
-        import { getFirestore, doc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, getDocs, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
@@ -417,25 +417,25 @@ productosCotizacion.length = 0;
               <td>${key1Data.Nombre}</td>
               <td>${clienteData.Total_Cotizacion}</td>
               <td>
-            <img src="Img/borrar.png" alt="Eliminar" onclick="eliminarCotizacion('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
-            <img src="Img/editar.png" alt="Editar" onclick="actualizarCotizacion('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
-            </td>
+                <img src="Img/borrar.png" alt="Eliminar" class="eliminarCotizacionButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
+              </td>
           `;
+          //<img src="Img/editar.png" alt="Editar" onclick="actualizarCotizacion('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
+              
           cuerpoTablaClientes.appendChild(fila);
+          const eliminarCotizacionButton = fila.querySelector('.eliminarCotizacionButton');
+          eliminarCotizacionButton.addEventListener('click', () => eliminarCotizacion(documento.id));
+          
       });
 
       const clientesCollection = collection(db, 'Clientes');
-
       // Obtener todos los documentos de la colección de clientes
       const clientesSnapshot = await getDocs(clientesCollection);
-
       // Obtener el elemento <select> por su nombre
       const selectClientes = document.getElementsByName('Id_Cliente')[0];
-
       // Iterar sobre los documentos y agregar opciones al <select>
       clientesSnapshot.forEach((doc) => {
           const clienteData = doc.data();
-
           // Crear un elemento de opción y agregarlo al <select>
           const option = document.createElement('option');
           option.value = doc.id; // Usar el ID del documento como valor
@@ -443,19 +443,41 @@ productosCotizacion.length = 0;
           selectClientes.add(option);
       });
       const refaccionesCollection = collection(db, 'Refacciones');
-
       const refaccionesSnapshot = await getDocs(refaccionesCollection);
-
       const selectrefacciones = document.getElementsByName('Id_Refaccion')[0];
-
       refaccionesSnapshot.forEach((doc) => {
           const refaccionData = doc.data();
-
           const option = document.createElement('option');
           option.value = doc.id;
           option.text = refaccionData.Descripcion; 
           selectrefacciones.add(option);
       });
+
+      async function eliminarCotizacion(id) {
+        try {
+          const cotizacionRef = doc(dataCollection, id);
+          // Verificar si el documento existe antes de intentar eliminarlo
+          const cotizacionDoc = await getDoc(cotizacionRef);
+          if (!cotizacionDoc.exists()) {
+            console.log("La cotizacion con el ID", id, "no existe.");
+            return;
+          }
+          // Confirmación antes de eliminar
+          const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar esta cotizacion?");
+          if (!confirmacion) {
+            return;
+          }
+          // Eliminar el documento en Firestore
+          await deleteDoc(cotizacionRef);
+          console.log("Cotizacion eliminada con éxito");
+          alert("Cotizacion eliminada con éxito");
+          location.reload();
+          return;
+        } catch (error) {
+          console.error("Error al eliminar la cotizacion:", error);
+          alert("Error al eliminar la cotizacion");
+        }
+      }
 
       </script>
     </div>
