@@ -35,7 +35,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
     const firebaseConfig1 = {
         apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
@@ -51,23 +51,38 @@
     const app1 = initializeApp(firebaseConfig1);
     const analytics1 = getAnalytics(app1);
     const db1 = getFirestore(app1);
+    const dataCollection1= collection(db1, 'Proveedores');
 
-    function agregarProveedor() {
-        const proveedoresCollection = collection(db1, 'Proveedores');
-        const nombre = document.getElementById('nombreProveedor').value;
-        const domicilio = document.getElementById('domicilioProvedor').value;
-        const nTelefonico = document.getElementById('ntelefonicoProveedor').value;
-        const email = document.getElementById('emailProveedor').value;
+    async function agregarProveedor(event) {
+    event.preventDefault();
 
-        const nuevoProveedor = {
-            Nombre: nombre,
-            Domicilio: domicilio,
-            Numero_Tel: nTelefonico,
-            Correo: email,
-            // Agrega más campos según tus necesidades
-        };
+    const nombre = document.getElementById('nombreProveedor').value;
+    const domicilio = document.getElementById('domicilioProvedor').value;
+    const nTelefonico = document.getElementById('ntelefonicoProveedor').value;
+    const email = document.getElementById('emailProveedor').value;
 
-        const docRef = addDoc(proveedoresCollection, nuevoProveedor)
+    const nuevoProveedor = {
+        Nombre: nombre,
+        Domicilio: domicilio,
+        Numero_Tel: nTelefonico,
+        Correo: email,
+    };
+
+    try {
+        if (document.getElementById('modalTitle').textContent === 'Editar Proveedor') {
+            // Modo de edición, actualizar el proveedor existente
+            const proveedorId = document.getElementById('myForm').getAttribute('data-doc-id');
+            await updateDoc(doc(dataCollection1, proveedorId), nuevoProveedor).then((docRef) =>{
+              console.log("Proveedor actualizado con éxito");
+              alert("Proveedor actualizado con éxito");
+              location.reload();
+            }).catch((error)=>{
+                console.error("Error al actualizar el proveedor:", error);
+                alert("Error al actualizar al proveedor");
+            });
+        } else {
+            // Modo de agregación, agregar un nuevo proveedor
+            const docRef = addDoc(dataCollection1, nuevoProveedor)
             .then((docRef) => {
                 console.log("Proveedor añadido con éxito, ID: ", docRef.id);
                 // Puedes realizar otras acciones después de agregar el proveedor
@@ -78,7 +93,19 @@
                 console.error("Error al agregar el proveedor:", error);
                 alert("Error al agregar al proveedor");
             });
+        }
+
+        // Limpiar el formulario después de agregar o actualizar
+        limpiarFormulario();
+
+        // Cerrar el modal (código específico para tu implementación)
+        // ...
+    } catch (error) {
+        console.error("Error al agregar/actualizar el proveedor:", error);
+        alert("Error al agregar/actualizar al proveedor");
     }
+}
+
     function limpiarFormulario() {
             // Limpiar los campos del formulario
             document.getElementById('myForm').reset();
@@ -298,15 +325,35 @@
         
      // Función para eliminar un proveedor
      async function eliminarProveedor(id) {
-    try {
-      const proveedorRef = doc(dataCollection, id);
-      
-      // Verificar si el documento existe antes de intentar eliminarlo
-      const proveedorDoc = await getDoc(proveedorRef);
-      if (!proveedorDoc.exists()) {
-        console.log("El proveedor con el ID", id, "no existe.");
-        return;
+        try {
+          const proveedorRef = doc(dataCollection, id);
+          
+          // Verificar si el documento existe antes de intentar eliminarlo
+          const proveedorDoc = await getDoc(proveedorRef);
+          if (!proveedorDoc.exists()) {
+            console.log("El proveedor con el ID", id, "no existe.");
+            return;
+          }
+
+          // Confirmación antes de eliminar
+          const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este proveedor?");
+          if (!confirmacion) {
+            return;
+          }
+
+          // Eliminar el documento en Firestore
+          await deleteDoc(proveedorRef);
+          console.log("Proveedor eliminado con éxito");
+
+          // Actualizar la tabla después de eliminar sin recargar la página
+          //cuerpoTablaClientes.removeChild(document.getElementById(id));
+          return;
+        } catch (error) {
+          console.error("Error al eliminar el proveedor:", error);
+          alert("Error al eliminar al proveedor");
+        }
       }
+<<<<<<< HEAD
 
       // Confirmación antes de eliminar
       const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este proveedor?");
@@ -327,6 +374,8 @@
       alert("Error al eliminar al proveedor");
     }
   }
+=======
+>>>>>>> 3ed1cea62a03a8613e8622fb3c6a6c9dd3b89315
         // Iterar sobre los documentos y mostrar sus datos en una tabla
         querySnapshot.forEach((doc) => {
             const clienteData = doc.data();
@@ -351,6 +400,54 @@
             const editarProveedorButton = fila.querySelector('.editarProveedorButton');
             editarProveedorButton.addEventListener('click', () => editarProveedor(doc.id));
         });
+
+        function abrirModalEditar(id) {
+
+          const modalTitle = document.getElementById('modalTitle');
+          
+          // Cambiar el texto del modal a "Editar Proveedor"
+          modalTitle.textContent = 'Editar Proveedor';
+          // Obtener el documento del proveedor que se va a editar
+          const proveedorRef = doc(dataCollection, id);
+
+          // Obtener los datos actuales del proveedor
+          getDoc(proveedorRef)
+              .then((proveedorDoc) => {
+                  if (proveedorDoc.exists()) {
+                      const proveedorData = proveedorDoc.data();
+
+                      // Rellenar el formulario con los datos actuales del proveedor
+                      document.getElementById('nombreProveedor').value = proveedorData.Nombre;
+                      document.getElementById('domicilioProvedor').value = proveedorData.Domicilio;
+                      document.getElementById('ntelefonicoProveedor').value = proveedorData.Numero_Tel;
+                      document.getElementById('emailProveedor').value = proveedorData.Correo;
+
+                      // Mostrar el modal
+                      document.getElementById('myForm').setAttribute('data-doc-id', id);
+                      document.getElementById('myModal').style.display = 'block';
+                      
+                  } else {
+                      console.log("El proveedor con el ID", id, "no existe.");
+                  }
+              })
+              .catch((error) => {
+                  console.error("Error al obtener datos del proveedor:", error);
+                  alert("Error al obtener datos del proveedor");
+              });
+      }
+
+      // Función para editar un proveedor
+      async function editarProveedor(id) {
+          try {
+              // Llamar a la función para abrir el modal con datos de proveedor
+              abrirModalEditar(id);
+
+              
+          } catch (error) {
+              console.error("Error al editar el proveedor:", error);
+              alert("Error al editar al proveedor");
+          }
+      }
    
       </script>
     </div>
@@ -363,7 +460,7 @@
   <div id="myModal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <h2>Nuevo Proveedor</h2>
+      <h2 id="modalTitle">Nuevo Proveedor</h2>
       <form id="myForm">
         <label for="nombreProveedor">Nombre:</label>
         <input type="text" id="nombreProveedor" name="nombreProveedor" required>

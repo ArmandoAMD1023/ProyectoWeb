@@ -152,7 +152,7 @@
             // Iterar sobre las filas de la tabla y sumar los subtotales
             const rows = tablaCotizacionBody.querySelectorAll('tr');
             rows.forEach((row) => {
-                const subtotal = parseFloat(row.querySelector('td:last-child').textContent);
+                const subtotal = parseFloat(row.querySelector('td:nth-last-child(2)').textContent);
                 total += subtotal;
             });
             return total;
