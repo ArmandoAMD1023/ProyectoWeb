@@ -273,7 +273,7 @@
       <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
-        import { getFirestore, doc, getDoc, getDocs, collection } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, getDocs, collection, deleteDoc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
@@ -319,7 +319,8 @@
       console.log("Proveedor eliminado con éxito");
 
       // Actualizar la tabla después de eliminar sin recargar la página
-      cuerpoTablaClientes.removeChild(document.getElementById(id));
+      //cuerpoTablaClientes.removeChild(document.getElementById(id));
+      return;
     } catch (error) {
       console.error("Error al eliminar el proveedor:", error);
       alert("Error al eliminar al proveedor");
@@ -332,17 +333,22 @@
             // Crear una nueva fila de la tabla y agregarla al DOM
             const fila = document.createElement('tr');
             fila.innerHTML = `
-            <td>${clienteData.Nombre}</td>
-            <td>${clienteData.Domicilio}</td>
-            <td>${clienteData.Correo}</td>
-            <td>${clienteData.Numero_Tel}</td>
-            <td>
-            <img src="Img/borrar.png" alt="Eliminar" onclick="eliminarProveedor('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
-            <img src="Img/editar.png" alt="Editar" onclick="actualizarProveedor('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
-            </td>
-
+                <td>${clienteData.Nombre}</td>
+                <td>${clienteData.Domicilio}</td>
+                <td>${clienteData.Correo}</td>
+                <td>${clienteData.Numero_Tel}</td>
+                <td>
+                    <img src="Img/borrar.png" alt="Eliminar" class="eliminarProveedorButton" data-doc-id="${doc.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                    <img src="Img/editar.png" alt="Editar" class="editarProveedorButton" data-doc-id="${doc.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                </td>
             `;
             cuerpoTablaClientes.appendChild(fila);
+
+            const eliminarProveedorButton = fila.querySelector('.eliminarProveedorButton');
+            eliminarProveedorButton.addEventListener('click', () => eliminarProveedor(doc.id));
+            
+            const editarProveedorButton = fila.querySelector('.editarProveedorButton');
+            editarProveedorButton.addEventListener('click', () => editarProveedor(doc.id));
         });
    
       </script>
