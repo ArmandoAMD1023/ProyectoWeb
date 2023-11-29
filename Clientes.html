@@ -35,7 +35,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
-    import { getFirestore, doc, getDoc, getDocs, collection, addDoc, updateDoc  } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, getDocs, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
     const firebaseConfig1 = {
             apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
@@ -49,12 +49,12 @@
         };
         const app1 = initializeApp(firebaseConfig1);
         const analytics1 = getAnalytics(app1);
-
         const db1 = getFirestore(app1);
-
-    function agregarCliente() {
-        // Referencia a la colección de clientes
         const clientesCollection = collection(db1, 'Clientes');
+
+    async function agregarCliente(event) {
+        // Referencia a la colección de clientes
+        event.preventDefault();
         const nombre = document.getElementById('nombre').value;
         const domicilio = document.getElementById('domicilio').value;
         const colonia = document.getElementById('colonia').value;
@@ -75,7 +75,19 @@
           Regimen: regimen,
           // Agrega más campos según tus necesidades
         };
-
+        try {
+        if (document.getElementById('modalTitle').textContent === 'Editar Clientes') {
+            // Modo de edición, actualizar el proveedor existente
+            const proveedorId = document.getElementById('myForm').getAttribute('data-doc-id');
+            await updateDoc(doc(clientesCollection, proveedorId), nuevoCliente).then((docRef) =>{
+              console.log("Cliente actualizado con éxito");
+              alert("Cliente actualizado con éxito");
+              location.reload();
+            }).catch((error)=>{
+                console.error("Error al actualizar al Cliente:", error);
+                alert("Error al actualizar al Cliente");
+            });
+          } else {
         // Agregar el nuevo cliente a la colección
         const docRef = addDoc(clientesCollection, nuevoCliente)
             .then((docRef) => {
@@ -88,6 +100,12 @@
                 console.error("Error al agregar el cliente:", error);
                 alert("Error al agregar el cliente");
             });
+          }
+        } catch (error) {
+        console.error("Error al agregar/actualizar el Cliente:", error);
+        alert("Error al agregar/actualizar al Cliente");
+    }
+    
     }
     function limpiarFormulario() {
             // Limpiar los campos del formulario
@@ -99,7 +117,8 @@
         if (enviarBtn) {
             enviarBtn.addEventListener('click', agregarCliente);
         }
-    });
+    }); 
+    
 </script>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -326,7 +345,7 @@
       // Eliminar el documento en Firestore
       await deleteDoc(proveedorRef);
       console.log("Cliente eliminado con éxito");
-      alert("Error al eliminar al Cliente");
+      alert("Cliente eliminado con éxito");
       // Actualizar la tabla después de eliminar sin recargar la página
       //cuerpoTablaClientes.removeChild(document.getElementById(id));
       return;
@@ -417,7 +436,7 @@
   <div id="myModal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <h2 id="modalTitle">Nuevo Proveedor</h2>
+      <h2 id="modalTitle">Nuevo Cliente</h2>
       <form id="myForm">
         <label for="nombre">Nombre:</label>
         <input type="text" id="nombre" name="nombre" required>
