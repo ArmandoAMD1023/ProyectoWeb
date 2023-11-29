@@ -35,7 +35,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
-    import { getFirestore, doc, getDoc, getDocs, collection, addDoc  } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, getDocs, collection, addDoc, updateDoc  } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
     const firebaseConfig1 = {
             apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
@@ -162,7 +162,7 @@
                with font-awesome or any other icon font library -->
           <li class="nav-item menu-open">
             <a href="#" class="nav-link active">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <i class="nav-icon fas fa-th"></i>
               <p>
                 Ventas
                 <i class="right fas fa-angle-left"></i>
@@ -186,7 +186,7 @@
 
           <li class="nav-item menu-open">
             <a href="#" class="nav-link active">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <i class="nav-icon fas fa-table"></i>
               <p>
                 Organización
                 <i class="right fas fa-angle-left"></i>
@@ -360,6 +360,53 @@
             editarProveedorButton.addEventListener('click', () => editarProveedor(doc.id));
         });
 
+        function abrirModalEditar(id) {
+
+        const modalTitle = document.getElementById('modalTitle');
+
+        // Cambiar el texto del modal a "Editar Proveedor"
+        modalTitle.textContent = 'Editar Clientes';
+        // Obtener el documento del proveedor que se va a editar
+        const proveedorRef = doc(dataCollection, id);
+
+        // Obtener los datos actuales del proveedor
+        getDoc(proveedorRef)
+            .then((proveedorDoc) => {
+                if (proveedorDoc.exists()) {
+                    const proveedorData = proveedorDoc.data();
+
+                    // Rellenar el formulario con los datos actuales del proveedor
+                    document.getElementById('nombre').value = proveedorData.Nombre;
+                    document.getElementById('colonia').value = proveedorData.Colonia;
+                    document.getElementById('domicilio').value = proveedorData.Calle;
+                    document.getElementById('cPostal').value = proveedorData.Codigo_postal;
+                    document.getElementById('nTelefonico').value = proveedorData.Numero;
+                    document.getElementById('tipoPersona').value = proveedorData.Tipo_persona;
+                    document.getElementById('rfc').value = proveedorData.RFC;
+                    document.getElementById('regimen').value = proveedorData.Regimen;
+                    // Mostrar el modal
+                    document.getElementById('myForm').setAttribute('data-doc-id', id);
+                    document.getElementById('myModal').style.display = 'block';
+                    
+                } else {
+                    console.log("El proveedor con el ID", id, "no existe.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error al obtener datos del proveedor:", error);
+                alert("Error al obtener datos del proveedor");
+            });
+        }
+        async function editarProveedor(id) {
+          try {
+              // Llamar a la función para abrir el modal con datos de proveedor
+              abrirModalEditar(id);
+          } catch (error) {
+              console.error("Error al editar el proveedor:", error);
+              alert("Error al editar al proveedor");
+          }
+      }
+   
       </script>
     </div>
     <!-- /.content -->
@@ -370,7 +417,7 @@
   <div id="myModal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <h2>Nuevo Cliente</h2>
+      <h2 id="modalTitle">Nuevo Proveedor</h2>
       <form id="myForm">
         <label for="nombre">Nombre:</label>
         <input type="text" id="nombre" name="nombre" required>
