@@ -35,7 +35,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
-    import { getFirestore, doc, getDoc, getDocs, collection, addDoc  } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, getDocs, collection, addDoc ,updateDoc } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
     const firebaseConfig1 = {
             apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
@@ -51,15 +51,16 @@
     const analytics1 = getAnalytics(app1);
 
     const db1 = getFirestore(app1);
+    const dataCollection1= collection(db1, 'Refacciones'); 
     
-    function agregarRefaccion() {
-      
+    async function agregarRefaccion(event) {
+      event.preventDefault();
 
       // Obtener el valor seleccionado del <select>
         const selectMontacarga = document.getElementsByName('Id_EquipoMontacarga')[0];
         const equipoSeleccionado = selectMontacarga.options[selectMontacarga.selectedIndex].text;
         const equipoSeleccionadoId = selectMontacarga.options[selectMontacarga.selectedIndex].value;
-// Obtener el valor seleccionado del <select>
+    // Obtener el valor seleccionado del <select>
   const selectProveedor = document.getElementsByName('Id_Provedor')[0];
         const proveedorSeleccionado = selectProveedor.options[selectProveedor.selectedIndex].text;
         const proveedorSeleccionadoId = selectProveedor.options[selectProveedor.selectedIndex].value;
@@ -90,8 +91,21 @@
             Costo: costo,
             Precio: precio
     };
-
-    const docRef = addDoc(refaccionCollection, nuevaRefaccion)
+    try {
+//      document.getElementById('modalTitle').textContent 
+        if (document.getElementById('modalTitle').textContent == 'Editar Refaccion') { 
+            // Modo de edición, actualizar el proveedor existente
+            const proveedorId = document.getElementById('myForm').getAttribute('data-doc-id');
+            await updateDoc(doc(refaccionCollection, proveedorId), nuevaRefaccion).then((docRef) =>{
+              console.log("Refaccion actualizado con éxito");
+              alert("Refaccion actualizado con éxito");
+              location.reload();
+            }).catch((error)=>{
+                console.error("Error al actualizar la refaccion:", error);
+                alert("Error al actualizar la refaccion");
+            });
+        } else {
+          const docRef = addDoc(refaccionCollection, nuevaRefaccion)
             .then((docRef) => {
                 console.log("Refacción añadida con éxito, ID: ",docRef.id);
                 alert("Refacción añadida con éxito, ID: " + docRef.id);
@@ -102,6 +116,17 @@
                 console.error("Error al agregar la refacción:", error);
                 alert("Error al agregar la refaccion");
             });
+        }
+            // Limpiar el formulario después de agregar o actualizar
+            limpiarFormulario();
+
+          // Cerrar el modal (código específico para tu implementación)
+          // ...
+          } catch (error) {
+          console.error("Error al agregar la refaccion: ", error);
+          alert("Error al agregar la refaccion");
+}
+   
    
   }
   function limpiarFormulario() {
@@ -448,6 +473,57 @@
             selectProveedor.add(option);
         });
 
+        function abrirModalEditar(id) {
+
+const modalTitle = document.getElementById('modalTitle');
+
+// Cambiar el texto del modal a "Editar Proveedor"
+modalTitle.textContent = 'Editar Refaccion';
+// Obtener el documento del proveedor que se va a editar
+const proveedorRef = doc(dataCollection, id);
+
+// Obtener los datos actuales del proveedor
+getDoc(proveedorRef)
+    .then((proveedorDoc) => {
+        if (proveedorDoc.exists()) {
+            const proveedorData = proveedorDoc.data();
+
+            // Rellenar el formulario con los datos actuales del proveedor
+            //document.getElementById('Id_EquipoMontacarga')[0]= proveedorData.Id_EquipoMontacargas;
+            //document.getElementById('Id_Provedor"').value = proveedorData.Domicilio;
+            document.getElementById('DescripcionRefa').value = proveedorData.Descripcion;
+            document.getElementById('Costo').value = proveedorData.Costo;
+            document.getElementById('PrecioRefa').value = proveedorData.Precio;
+            //document.getElementsByName('Id_EquipoMontacarga')[0] = proveedorData.Id_EquipoMontacargas;
+            
+
+            // Mostrar el modal
+            document.getElementById('myForm').setAttribute('data-doc-id', id);
+            document.getElementById('myModal').style.display = 'block';
+            
+        } else {
+            console.log("El proveedor con el ID", id, "no existe.");
+        }
+              })
+              .catch((error) => {
+                  console.error("Error al obtener datos del proveedor:", error);
+                  alert("Error al obtener datos del proveedor");
+              });
+          }
+
+          // Función para editar un proveedor
+          async function editarProveedor(id) {
+          try {
+              // Llamar a la función para abrir el modal con datos de proveedor
+              abrirModalEditar(id);
+
+              
+          } catch (error) {
+              console.error("Error al editar el proveedor:", error);
+              alert("Error al editar al proveedor");
+          }
+          }
+
       </script>
     </div>
     <!-- /.content -->
@@ -457,7 +533,7 @@
     <div id="myModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
-        <h2>Nueva Refacción</h2>
+        <h2 id="modalTitle">Nuevo Refacción</h2>  
        <form id="myForm">
           <label for="Id_EquipoMontacarga">Equipo Montacarga:</label>
           <select name="Id_EquipoMontacarga" required></select>
