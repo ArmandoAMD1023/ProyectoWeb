@@ -198,7 +198,16 @@
 
 // Limpiar la lista de productos después de agregarlos al serrvicio
 productosServicio.length = 0;
-      
+function recargarPagina() {
+        location.reload();
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+        const cerar = document.getElementById('cerrar');
+
+        if (cerar) {
+            cerrar.addEventListener('click', recargarPagina);
+        }
+    }); 
   </script>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -458,6 +467,7 @@ productosServicio.length = 0;
               <td>${clienteData.Total_Servicio}</td>
               <td>
                 <img src="Img/borrar.png" alt="Eliminar" class="eliminarServicioButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                <img src="Img/detalle.png" alt="Detalle" onclick="eliminardetalle('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
               </td>
           `;
           //<img src="Img/editar.png" alt="Editar" class="editarServicioButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
@@ -466,7 +476,9 @@ productosServicio.length = 0;
 
           const eliminarServicioButton = fila.querySelector('.eliminarServicioButton');
           eliminarServicioButton.addEventListener('click', () => eliminarServicio(documento.id));
-          
+        
+          const detalleCotizacionButton = fila.querySelector('.detalleCotizacionButton');
+          detalleCotizacionButton.addEventListener('click', () => detalleCotizacion(documento.id));
           //const editarServicioButton = fila.querySelector('.editarServicioButton');
           //editarServicioButton.addEventListener('click', () => editarProveedor(doc.id));
       });
@@ -540,8 +552,11 @@ productosServicio.length = 0;
             </form>
           </div>
           <div class="image-container">
-            <h2>Nuevo Servicio</h2>
+            <h2>Servicio</h2>
             <img src="Img/Logo.jpeg" alt="Descripción de la imagen">
+            <br>
+            <input type="submit" value="Guardar y cerrar" id="cerrar">
+
           </div>
           <div>
             <form id="myForm">

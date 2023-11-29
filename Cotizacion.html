@@ -123,6 +123,7 @@
                 <td>${subtotal}</td>
                 <td>
             <img src="Img/borrar.png" alt="Eliminar" onclick="eliminarProductoC('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
+            
             </td>
             `;
 
@@ -191,7 +192,16 @@
 
 // Limpiar la lista de productos después de agregarlos a la cotización
 productosCotizacion.length = 0;
-      
+function recargarPagina() {
+        location.reload();
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+        const cerar = document.getElementById('cerrar');
+
+        if (cerar) {
+            cerrar.addEventListener('click', recargarPagina);
+        }
+    }); 
   </script>
 
 </head>
@@ -418,6 +428,7 @@ productosCotizacion.length = 0;
               <td>${clienteData.Total_Cotizacion}</td>
               <td>
                 <img src="Img/borrar.png" alt="Eliminar" class="eliminarCotizacionButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                <img src="Img/detalle.png" alt="Detalle" onclick="eliminardetalle('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
               </td>
           `;
           //<img src="Img/editar.png" alt="Editar" onclick="actualizarCotizacion('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
@@ -425,6 +436,9 @@ productosCotizacion.length = 0;
           cuerpoTablaClientes.appendChild(fila);
           const eliminarCotizacionButton = fila.querySelector('.eliminarCotizacionButton');
           eliminarCotizacionButton.addEventListener('click', () => eliminarCotizacion(documento.id));
+          
+          const detalleCotizacionButton = fila.querySelector('.detalleCotizacionButton');
+          detalleCotizacionButton.addEventListener('click', () => detalleCotizacion(documento.id));
           
       });
 
@@ -506,8 +520,10 @@ productosCotizacion.length = 0;
             </form>
         </div>
         <div class="image-container">
-          <h2>Nueva Cotizacion</h2>
+          <h2>Cotizacion</h2>
           <img src="Img/Logo.jpeg" alt="Descripción de la imagen">
+          <br>
+          <input type="submit" value="Guardar y Cerrar" id="cerrar">
         </div>
         <div>
             <form id="myForm">
