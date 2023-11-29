@@ -36,7 +36,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
-    import { getFirestore, doc, getDoc, getDocs, collection, addDoc  } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, getDocs, collection, addDoc, updateDoc  } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
 
     const firebaseConfig1 = {
             apiKey: "AIzaSyBpnAvDoljnnKlj2_6J0h0mpD2jJMUeZMg",
@@ -53,7 +53,7 @@
 
         const db1 = getFirestore(app1);
 
-        function agregarEquipoMontacarga() {
+        async function agregarEquipoMontacarga() {
             const equiposCollection = collection(db1, 'EquipoMontacargas');
             const numSerie = document.getElementById('num_serie').value;
             const modelo = document.getElementById('modelo').value;
@@ -68,7 +68,18 @@
                 // Agrega más campos según tus necesidades
             };
               //agregar
-            const docRef = addDoc(equiposCollection, nuevoEquipo)
+              if (document.getElementById('modalTitle').textContent == 'Editar Montacarga') {
+                const proveedorId = document.getElementById('myForm').getAttribute('data-doc-id');
+                  await updateDoc(doc(equiposCollection, proveedorId), nuevoEquipo).then((docRef) =>{
+                  console.log("Montacarga actualizado con éxito");
+                  alert("Montacarga actualizado con éxito");
+                  location.reload();
+                }).catch((error)=>{
+                    console.error("Error al actualizar el Montacarga:", error);
+                    alert("Error al actualizar al Montacarga");
+                });
+              }else{
+                const docRef = addDoc(equiposCollection, nuevoEquipo)
                 .then((docRef) => {
                     console.log("Equipo Montacarga añadido con éxito, ID: ", docRef.id);
                     alert("Equipo Montacarga añadido con éxito, ID: " + docRef.id);
@@ -79,6 +90,8 @@
                     console.error("Error al agregar el equipo montagas:", error);
                     alert("Error al agregar el equipoMontacargas");
                 });
+              }
+            
         }
         function limpiarFormulario() {
             // Limpiar los campos del formulario
@@ -335,8 +348,8 @@ async function eliminarEquipo(id) {
               <td>${clienteData.Marca}</td>
               <td>${clienteData.Descripcion}</td>
               <td>
-                    <img src="Img/borrar.png" alt="Eliminar" class="eliminarEquipoButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
-                    <img src="Img/editar.png" alt="Editar" class="editarEquipoButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                  <img src="Img/borrar.png" alt="Eliminar" class="eliminarEquipoButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                  <img src="Img/editar.png" alt="Editar" class="editarEquipoButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
                 </td>
             `;
             cuerpoTablaClientes.appendChild(fila);
@@ -347,6 +360,41 @@ async function eliminarEquipo(id) {
             const editarEquipoButton = fila.querySelector('.editarEquipoButton');
             editarEquipoButton.addEventListener('click', () => editarProveedor(documento.id));
         });
+        async function editarProveedor(id) {
+          try {
+              abrirModalEditar(id);
+          } catch (error) {
+              console.error("Error al editar el montacarga:", error);
+              alert("Error al editar al montacarga");
+          }
+      }
+      function abrirModalEditar(id) {
+
+const modalTitle = document.getElementById('modalTitle');
+modalTitle.textContent = 'Editar Montacarga';
+const proveedorRef = doc(dataCollection, id);
+getDoc(proveedorRef)
+    .then((proveedorDoc) => {
+        if (proveedorDoc.exists()) {
+            const proveedorData = proveedorDoc.data();
+            document.getElementById('descripcionEM').value = proveedorData.Descripcion;
+            document.getElementById('marca').value = proveedorData.Marca;
+            document.getElementById('modelo').value = proveedorData.Modelo;
+            document.getElementById('num_serie').value = proveedorData.NumeroSerie;
+
+            // Mostrar el modal
+            document.getElementById('myForm').setAttribute('data-doc-id', id);
+            document.getElementById('myModal').style.display = 'block';
+            
+        } else {
+            console.log("El montacarga con el ID", id, "no existe.");
+        }
+    })
+    .catch((error) => {
+        console.error("Error al obtener datos del montacarga:", error);
+        alert("Error al obtener datos del montacarga");
+    });
+}
       </script>
     </div>
     <!-- /.content -->
@@ -356,7 +404,7 @@ async function eliminarEquipo(id) {
   <div id="myModal" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
-      <h2>Nuevo Equipo Montacarga</h2>
+      <h2 id="modalTitle">Nuevo Equipo Montacargas</h2>
       <form id="myForm">
         <label for="num_serie">Numero de Serie:</label>
         <input type="text" id="num_serie" name="num_serie" required>

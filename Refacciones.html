@@ -314,7 +314,7 @@
                 <th>Descripcion</th>
                 <th>Precio</th>
                 <th>Costo</th>
-                <th>Modelo</th>
+                <th>Numero de serie</th>
                 <th>Nombre proveedor</th>
                 <th>Acciones</th> <!-- Nuevo campo para acciones -->
             </tr>
@@ -346,7 +346,6 @@
         // Obtener todos los documentos de la colección
         const querySnapshot = await getDocs(dataCollection);
 
-           // Función para eliminar un proveedor
            async function eliminarProveedor(id) {
     try {
         if (!id) {
@@ -372,8 +371,6 @@
         alert("Refaccion eliminada con éxito");
 
         location.reload();
-        // Actualizar la tabla después de eliminar sin recargar la página
-        // cuerpoTablaClientes.removeChild(document.getElementById(id));
         return;
     } catch (error) {
         console.error("Error al eliminar la refaccion:", error);
@@ -386,9 +383,6 @@
         alert("Error al eliminar la refaccion");
     }
 }
-
-
-        // Iterar sobre los documentos y mostrar sus datos en una tabla
         querySnapshot.forEach(async (documento) => {
           const clienteData = documento.data();
 
@@ -416,7 +410,7 @@
               <td>${clienteData.Descripcion}</td>
               <td>${clienteData.Precio}</td>
               <td>${clienteData.Costo}</td>
-              <td>${refaccionData.Modelo}</td>
+              <td>${refaccionData.NumeroSerie}</td>
               <td>${proveedorData.Nombre}</td>
               <td>
                     <img src="Img/borrar.png" alt="Eliminar" class="eliminarRefaccionButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
@@ -424,25 +418,15 @@
                 </td>
             `;
             cuerpoTablaClientes.appendChild(fila);
-
             const eliminarRefaccionButton = fila.querySelector('.eliminarRefaccionButton');
             eliminarRefaccionButton.addEventListener('click', () => eliminarProveedor(documento.id));
 
-            
             const editarRefaccionButton = fila.querySelector('.editarRefaccionButton');
             editarRefaccionButton.addEventListener('click', () => editarProveedor(documento.id));
       });
-
-      //SELECT EQUIPO MONTACARAGA
       const montacargaCollection = collection(db, 'EquipoMontacargas');
-
-        // Obtener todos los documentos de la colección de clientes
         const montacargasSnapshot = await getDocs(montacargaCollection);
-
-        // Obtener el elemento <select> por su nombre
         const selectMontacarga = document.getElementsByName('Id_EquipoMontacarga')[0];
-
-        // Iterar sobre los documentos y agregar opciones al <select>
         montacargasSnapshot.forEach((doc) => {
             const montaCargaeData = doc.data();
 
@@ -453,20 +437,11 @@
             selectMontacarga.add(option);
         });
 
-        //SELECT PROVEEDOR
         const proveedorCollection = collection(db, 'Proveedores');
-
-        // Obtener todos los documentos de la colección de clientes
         const proveedoresSnapshot = await getDocs(proveedorCollection);
-
-        // Obtener el elemento <select> por su nombre
         const selectProveedor = document.getElementsByName('Id_Provedor')[0];
-
-        // Iterar sobre los documentos y agregar opciones al <select>
         proveedoresSnapshot.forEach((doc) => {
             const proveedorData = doc.data();
-
-            // Crear un elemento de opción y agregarlo al <select>
             const option = document.createElement('option');
             option.value = doc.id; // Usar el ID del documento como valor
             option.text = proveedorData.Nombre; // Usar el nombre del cliente como texto de la opción
@@ -476,25 +451,33 @@
         function abrirModalEditar(id) {
 
 const modalTitle = document.getElementById('modalTitle');
-
-// Cambiar el texto del modal a "Editar Proveedor"
 modalTitle.textContent = 'Editar Refaccion';
-// Obtener el documento del proveedor que se va a editar
 const proveedorRef = doc(dataCollection, id);
-
-// Obtener los datos actuales del proveedor
 getDoc(proveedorRef)
     .then((proveedorDoc) => {
         if (proveedorDoc.exists()) {
             const proveedorData = proveedorDoc.data();
-
-            // Rellenar el formulario con los datos actuales del proveedor
-            //document.getElementById('Id_EquipoMontacarga')[0]= proveedorData.Id_EquipoMontacargas;
-            //document.getElementById('Id_Provedor"').value = proveedorData.Domicilio;
+            const equipoMontacargaId = proveedorData.Id_EquipoMontacargas;;
+            const selectMontacarga = document.getElementsByName('Id_EquipoMontacarga')[0];
+            for (let i = 0; i < selectMontacarga.options.length; i++) {
+                // Verificar si el valor de la opción coincide con el ID que quieres seleccionar
+                if (selectMontacarga.options[i].value === equipoMontacargaId) {
+                    // Establecer la opción como seleccionada
+                    selectMontacarga.options[i].selected = true;
+                    break; // Salir del bucle después de encontrar la coincidencia
+                }
+            }
+            const proveedorId = proveedorData.Id_Proveedor;;
+            const selectProveedor = document.getElementsByName('Id_Provedor')[0];
+            for (let i = 0; i < selectProveedor.options.length; i++) {
+                if (selectProveedor.options[i].value == proveedorId) {
+                    selectProveedor.options[i].selected = true;
+                    break;
+                }
+            }
             document.getElementById('DescripcionRefa').value = proveedorData.Descripcion;
             document.getElementById('Costo').value = proveedorData.Costo;
             document.getElementById('PrecioRefa').value = proveedorData.Precio;
-            //document.getElementsByName('Id_EquipoMontacarga')[0] = proveedorData.Id_EquipoMontacargas;
             
 
             // Mostrar el modal
@@ -502,25 +485,21 @@ getDoc(proveedorRef)
             document.getElementById('myModal').style.display = 'block';
             
         } else {
-            console.log("El proveedor con el ID", id, "no existe.");
+            console.log("La refacción con el ID", id, "no existe.");
         }
               })
               .catch((error) => {
-                  console.error("Error al obtener datos del proveedor:", error);
-                  alert("Error al obtener datos del proveedor");
+                  console.error("Error al obtener datos de la refacción:", error);
+                  alert("Error al obtener datos de la refacción");
               });
           }
 
-          // Función para editar un proveedor
           async function editarProveedor(id) {
           try {
-              // Llamar a la función para abrir el modal con datos de proveedor
               abrirModalEditar(id);
-
-              
           } catch (error) {
-              console.error("Error al editar el proveedor:", error);
-              alert("Error al editar al proveedor");
+              console.error("Error al editar la refacción:", error);
+              alert("Error al editar la refacción");
           }
           }
 
