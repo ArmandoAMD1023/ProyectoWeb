@@ -137,9 +137,9 @@
             `;
             tablaServicioBody.appendChild(newRow);
 
-            //const eliminarProductoS = fila.querySelector('.eliminarProductoS');
-            //eliminarProductoS.addEventListener('click', () => eliminarServicioP(documento.id));
-
+            const eliminarProveedorButton = newRow.querySelector('.eliminarProveedorButton');
+            eliminarProveedorButton.addEventListener('click', () => eliminarProveedor(newRow.textContent));
+            
             const totalAmount = calcularTotal();
             totalAmountSpan.textContent = totalAmount.toFixed(2);
             limpiarFormulario();
@@ -193,7 +193,7 @@
           const registrarBtn = document.getElementById('registrarBtn');
           const registrarProductoBtn = document.getElementById('registrarProductoBtn');
           if (registrarBtn) {
-              registrarBtn.addEventListener('click', registrarCotizacion);
+              registrarBtn.addEventListener('click', registrarServicio);
           }
           if (registrarProductoBtn) {
             registrarProductoBtn.addEventListener('click', registrarProducto);
