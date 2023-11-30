@@ -122,14 +122,17 @@
                 <td>${precioUnitario}</td>
                 <td>${subtotal}</td>
                 <td>
-            <img src="Img/borrar.png" alt="Eliminar" onclick="eliminarProductoC('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
-            
+                  <img src="Img/borrar.png" alt="Eliminar" class="eliminarProveedorButton" data-doc-id="${refaccionSeleccionado}" style="width: 20px; height: 20px; cursor: pointer;">
+                    
             </td>
             `;
 
             // Agregar la nueva fila a la tabla
             tablaCotizacionBody.appendChild(newRow);
 
+            const eliminarProveedorButton = newRow.querySelector('.eliminarProveedorButton');
+            eliminarProveedorButton.addEventListener('click', () => eliminarProveedor(newRow.textContent));
+            
             // Calcular y actualizar el total
             const totalAmount = calcularTotal();
             totalAmountSpan.textContent = totalAmount.toFixed(2);
@@ -159,23 +162,75 @@
             return total;
         }
 
+        function eliminarProveedor(id){        
+          for(let i = 0; i < tablaCotizacionBody.children.length; i ++){
+            if(tablaCotizacionBody.children[i].textContent == id){
+              console.log("aa");
+              tablaCotizacionBody.removeChild(tablaCotizacionBody.children[i]);
+            }
+          }
+          //tablaCotizacionBody.removeChild(tablaCotizacionBody.firstChild);
+
+          const totalAmount = calcularTotal();
+            totalAmountSpan.textContent = totalAmount.toFixed(2);
+        }
         function limpiarFormulario() {
             // Limpiar los campos del formulario
             document.getElementById('myForm').reset();
         }
-      
+        const cantidadInput = document.getElementById('Cantidad');
+        const precioUnitarioInput = document.getElementById('PrecioU'); 
+        const selectRefaccion = document.getElementsByName('Id_Refaccion')[0];
+
       document.addEventListener("DOMContentLoaded", function() {
           const registrarBtn = document.getElementById('registrarBtn');
           const registrarProductoBtn = document.getElementById('registrarProductoBtn');
-
           if (registrarBtn) {
               registrarBtn.addEventListener('click', registrarCotizacion);
           }
           if (registrarProductoBtn) {
             registrarProductoBtn.addEventListener('click', registrarProducto);
           }
+          if (selectRefaccion) {
+            selectRefaccion.addEventListener('change', rellenarPrecio);
+          }
+          if(cantidadInput){
+            cantidadInput.addEventListener('input', calcularSubtotal)
+          }
+          if(precioUnitarioInput){
+            precioUnitarioInput.addEventListener('input', calcularSubtotal)
+          }
       });
 
+      function rellenarPrecio(){
+        const refaccionesCollection = collection(db1, 'Refacciones');
+        const selectedRefaccionId = selectRefaccion.value;
+        const selectedRefaccionRef = doc(refaccionesCollection, selectedRefaccionId);
+        getDoc(selectedRefaccionRef)
+            .then((refaccionDoc) => {
+                if (refaccionDoc.exists()) {
+                    const refaccionData = refaccionDoc.data();
+                    precioUnitarioInput.value = refaccionData.Precio;
+                    calcularSubtotal();
+                } else {
+                    console.log("La refacción con el ID", selectedRefaccionId, "no existe.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error al obtener datos de la refacción:", error);
+                alert("Error al obtener datos de la refacción");
+            });
+            
+      }
+
+      function calcularSubtotal(){
+        const cantidad = parseFloat(cantidadInput.value);
+        const precioUnitario = parseFloat(precioUnitarioInput.value);
+        const subtotal = cantidad * precioUnitario;
+
+        // Mostrar el subtotal en el campo correspondiente
+        document.getElementById('SubTotal').value = subtotal;
+      }
       async function agregarProductoCotizacionFirestore(cotizacionID, producto) {
           const detalleCotizacionCollection = collection(db1, 'Cotizacion', cotizacionID, 'Detalle_Cotizacion');
 
@@ -202,52 +257,6 @@ function recargarPagina() {
             cerrar.addEventListener('click', recargarPagina);
         }
     }); 
-
-
-
-
-
-    // ...
-
-
-// ...
-
-
-// Función para mostrar el modal con el detalle
-function detalleCotizacionCollection(id) {
-  // Obtener la información necesaria para el detalle (puedes modificar según tu lógica)
-  const detalleCotizacionCollection = obtenerDetalleCotizacion(id);
-
-  // Llenar la tabla del modal con la información del detalle
-  const tablaCotizacionBody = document.getElementById('tablaCotizacionBody');
-  tablaCotizacionBody.innerHTML = '';
-
-  detalleCotizacionCollection.forEach(item => {
-    const filaDetalle = document.createElement('tr');
-    filaDetalle.innerHTML = `
-      <td>${item.Cantidad}</td>
-      <td>${item.Descripcion}</td>
-      <td>${item.PrecioUnitario}</td>
-      <td>${item.Subtotal}</td>
-      <td>
-        <!-- Puedes agregar acciones aquí si es necesario -->
-      </td>
-    `;
-    tablaCotizacionBody.appendChild(filaDetalle);
-  });
-
-  // Mostrar el modal
-  const modal = document.getElementById('modalDetalle');
-  modal.style.display = 'block';
-}
-
-// Función para cerrar el modal
-function cerrarModal() {
-  const modal = document.getElementById('modalDetalle');
-  modal.style.display = 'none';
-}
-
-// ...
 
   </script>
 
@@ -540,47 +549,41 @@ function cerrarModal() {
           alert("Error al eliminar la cotización");
         }
       }
-
-      
-
 // Función para mostrar el modal con el detalle
-function detalleCotizacionCollection(id) {
-  const detalleCotizacionCollection = collection(db1, 'Cotizacion', cotizacionID, 'Detalle_Cotizacion');
+ async function detalleCotizacion(id) {
+  const detalleCotizacionCollection = collection(db, 'Cotizacion', id, 'Detalle_Cotizacion');
 
 
   // Llenar la tabla del modal con la información del detalle
-  const tablaCotizacionBody = document.getElementById('tablaCotizacionBody');
-  tablaCotizacionBody.innerHTML = '';
+  const tablaCotizacionBody = document.getElementById('tablaCotizacionBody2');
+  
+  const refaccionesSnapshot = await getDocs(detalleCotizacionCollection);
+      await refaccionesSnapshot.forEach(async (documento2) => {
+        const clienteData = documento2.data();
 
-  detalleCotizacionCollection.forEach(item => {
-    const filaDetalle = document.createElement('tr');
+        const filaDetalle = document.createElement('tr');
+        console.log(clienteData.Cantidad);
+
+        const docRef = doc(db, "Refacciones", clienteData.Id_Refaccion);
+          const docSnapRef = await getDoc(docRef);
+
+          let refaccionData = {};
+          if (docSnapRef.exists()) {
+              refaccionData = docSnapRef.data();
+          } else {
+              console.log("No such document!");
+          }
     filaDetalle.innerHTML = `
-      <td>${item.Cantidad}</td>
-      <td>${item.Descripcion}</td>
-      <td>${item.PrecioUnitario}</td>
-      <td>${item.Subtotal}</td>
-      <td>
-        <!-- Puedes agregar acciones aquí si es necesario -->
-      </td>
+      <td>${clienteData.Cantidad}</td>
+      <td>${refaccionData.Descripcion}</td>
+      <td>${clienteData.Precio_Unitario}</td>
+      <td>${clienteData.Subtotal}</td>
     `;
     tablaCotizacionBody.appendChild(filaDetalle);
-  });
-
+      });
   // Mostrar el modal
-  const modal = document.getElementById('modalDetalle');
-  modal.style.display = 'block';
+  document.getElementById('modalDetalle').style.display = 'block';
 }
-
-// Función para cerrar el modal
-function cerrarModal() {
-  const modal = document.getElementById('modalDetalle');
-  modal.style.display = 'none';
-}
-
-// ...
-
-
-
       </script>
     </div>
     <!-- /.content -->
@@ -652,19 +655,18 @@ function cerrarModal() {
   </div>
   <div id="modalDetalle" class="modal">
     <div class="modal-content">
-      <span class="close" onclick="cerrarModal()">&times;</span>
-      <table>
+      <span class="close"id="cerrar">&times;</span>
+      <table class="table" id="tabla-clientes" border="1">
         <thead>
           <h4>Detalle Cotización</h4>
           <tr>
             <th>Cantidad</th>
             <th>Descripción Refacción</th>
             <th>Precio Unitario</th>
-            <th>Subtotal</th>
-            <th>Acciones</th> <!-- Nuevo campo para acciones -->
+            <th>Subtotal</th><!-- Nuevo campo para acciones -->
           </tr>
         </thead>
-        <tbody id="tablaCotizacionBody"></tbody>
+        <tbody id="tablaCotizacionBody2"></tbody>
       </table>
     </div>
   </div>

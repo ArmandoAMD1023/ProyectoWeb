@@ -2,18 +2,32 @@
   var modal = document.getElementById('myModal');
   var btn = document.getElementById('openModalBtn');
   var span = document.getElementsByClassName('close')[0];
-
+  var modal2 = document.getElementById('modalDetalle');
+  var span2 = document.getElementsByClassName('close')[1];
+  const tablaCotizacionBody = document.getElementById('tablaCotizacionBody2');
+  
   btn.onclick = function () {
     modal.style.display = 'block';
   };
-
   span.onclick = function () {
     modal.style.display = 'none';
   };
 
+  span2.onclick = function () {
+    while(tablaCotizacionBody.firstChild != tablaCotizacionBody.lastChild){
+    tablaCotizacionBody.removeChild(tablaCotizacionBody.firstChild);
+    }
+    tablaCotizacionBody.removeChild(tablaCotizacionBody.firstChild);
+    
+    modal2.style.display = 'none';
+ };
+
   window.onclick = function (event) {
     if (event.target == modal) {
       modal.style.display = 'none';
+    }
+    if (event.target == modal2) {
+      modal2.style.display = 'none';
     }
   };
 
