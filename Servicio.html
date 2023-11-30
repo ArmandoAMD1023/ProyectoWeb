@@ -130,15 +130,21 @@
                 <td>${precioUnitario}</td>
                 <td>${subtotal}</td>
                 <td>
-            <img src="Img/borrar.png" alt="Eliminar" onclick="eliminarProductoS('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
-            </td>
+                  
+                  <img src="Img/borrar.png" alt="Eliminar" class="eliminarProveedorButton" data-doc-id="${refaccionSeleccionado}" style="width: 20px; height: 20px; cursor: pointer;">
+                  </td>  
             
             `;
-
-         
+          
 
             // Agregar la nueva fila a la tabla
-            tablaServicioBody.appendChild(newRow);
+          
+            tablaCotizacionBody.appendChild(newRow);
+
+          const eliminarProveedorButton = newRow.querySelector('.eliminarProveedorButton');
+          eliminarProveedorButton.addEventListener('click', () => eliminarProveedor(newRow.textContent));
+
+           // tablaServicioBody.appendChild(newRow);
 
             // Calcular y actualizar el total
             const totalAmount = calcularTotal();
@@ -156,9 +162,6 @@
 
         // Almacenar el producto en una lista (puedes inicializar esta lista fuera de la función)
         productosServicio.push(productoServicio);
-        cuerpoTablaClientes.appendChild(fila);
-         const eliminarProductoS = fila.querySelector('.eliminarProductoS');
-          eliminarProductoS.addEventListener('click', () => eliminarServicioP(documento.id));
         }
         
 
@@ -172,24 +175,75 @@
             });
             return total;
         }
+        function eliminarProveedor(id){        
+          for(let i = 0; i < tablaServicioBody.children.length; i ++){
+            if(tablaServicioBody.children[i].textContent == id){
+              console.log("aa");
+              tablaServicioBody.removeChild(tablaServicioBody.children[i]);
+            }
+          }
+          //tablaCotizacionBody.removeChild(tablaCotizacionBody.firstChild);
+
+          const totalAmount = calcularTotal();
+            totalAmountSpan.textContent = totalAmount.toFixed(2);
+        }
 
         function limpiarFormulario() {
             // Limpiar los campos del formulario
             document.getElementById('myForm').reset();
         }
+        const cantidadInput = document.getElementById('Cantidad');
+        const precioUnitarioInput = document.getElementById('PrecioU'); 
+        const selectRefaccion = document.getElementsByName('Id_Refaccion')[0];
+
       
-      document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function() {
           const registrarBtn = document.getElementById('registrarBtn');
           const registrarProductoBtn = document.getElementById('registrarProductoBtn');
-
           if (registrarBtn) {
-              registrarBtn.addEventListener('click', registrarServicio);
-              
+              registrarBtn.addEventListener('click', registrarCotizacion);
           }
           if (registrarProductoBtn) {
             registrarProductoBtn.addEventListener('click', registrarProducto);
           }
+          if (selectRefaccion) {
+            selectRefaccion.addEventListener('change', rellenarPrecio);
+          }
+          if(cantidadInput){
+            cantidadInput.addEventListener('input', calcularSubtotal)
+          }
+          if(precioUnitarioInput){
+            precioUnitarioInput.addEventListener('input', calcularSubtotal)
+          }
       });
+      function rellenarPrecio(){
+        const refaccionesCollection = collection(db1, 'Refacciones');
+        const selectedRefaccionId = selectRefaccion.value;
+        const selectedRefaccionRef = doc(refaccionesCollection, selectedRefaccionId);
+        getDoc(selectedRefaccionRef)
+            .then((refaccionDoc) => {
+                if (refaccionDoc.exists()) {
+                    const refaccionData = refaccionDoc.data();
+                    precioUnitarioInput.value = refaccionData.Precio;
+                    calcularSubtotal();
+                } else {
+                    console.log("La refacción con el ID", selectedRefaccionId, "no existe.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error al obtener datos de la refacción:", error);
+                alert("Error al obtener datos de la refacción");
+            });
+            
+      }
+      function calcularSubtotal(){
+        const cantidad = parseFloat(cantidadInput.value);
+        const precioUnitario = parseFloat(precioUnitarioInput.value);
+        const subtotal = cantidad * precioUnitario;
+
+        // Mostrar el subtotal en el campo correspondiente
+        document.getElementById('SubTotal').value = subtotal;
+      }
 
       async function agregarProductoServicioFirestore(servicioID, producto) {
           const detalleServicioCollection = collection(db1, 'Servicio', servicioID, 'Detalle_Servicio');
@@ -218,24 +272,7 @@ function recargarPagina() {
         }
     }); 
 
-   async function eliminarServicioP(event) {
-    try {
-        // Confirmación antes de eliminar
-        const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este servicio?");
-        if (!confirmacion) {
-            return;
-        }
-
-        // Eliminar la fila de la tabla
-        fila.remove();
-
-        console.log("Servicio eliminado de la interfaz de usuario");
-        alert("Servicio eliminado de la interfaz de usuario");
-    } catch (error) {
-        console.error("Error al eliminar el servicio:", error);
-        alert("Error al eliminar al servicio");
-    }
-}
+  
 
   </script>
 </head>
