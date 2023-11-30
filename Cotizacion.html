@@ -88,7 +88,7 @@
         const docRef = addDoc(cotizacionCollection, nuevaCotizacion)
             .then((docRef) => {
                 console.log("Cotizacion añadido con éxito, ID: ",docRef.id);
-                alert("Cotizacion añadido con éxito, ID: " + docRef.id);
+                alert("Cotización añadida con éxito, ID: " + docRef.id);
                 cotizacionID.textContent = docRef.id
 
                 productosCotizacion.forEach(async (producto) => {
@@ -97,8 +97,8 @@
                 // Puedes realizar otras acciones después de agregar el cliente
             })
             .catch((error) => {
-                console.error("Error al agregar el cliente:", error);
-                alert("Error al agregar la cotizacion");
+                console.error("Error al agregar la cotización:", error);
+                alert("Error al agregar la cotización");
             });
       }
 
@@ -202,6 +202,53 @@ function recargarPagina() {
             cerrar.addEventListener('click', recargarPagina);
         }
     }); 
+
+
+
+
+
+    // ...
+
+
+// ...
+const detalleData = collection(db1, 'Cotizacion');
+
+// Función para mostrar el modal con el detalle
+function detalleCotizacion(id) {
+  // Obtener la información necesaria para el detalle (puedes modificar según tu lógica)
+  const detalleData = obtenerDetalleCotizacion(id);
+
+  // Llenar la tabla del modal con la información del detalle
+  const tablaCotizacionBody = document.getElementById('tablaCotizacionBody');
+  tablaCotizacionBody.innerHTML = '';
+
+  detalleData.forEach(item => {
+    const filaDetalle = document.createElement('tr');
+    filaDetalle.innerHTML = `
+      <td>${item.Cantidad}</td>
+      <td>${item.Descripcion}</td>
+      <td>${item.PrecioUnitario}</td>
+      <td>${item.Subtotal}</td>
+      <td>
+        <!-- Puedes agregar acciones aquí si es necesario -->
+      </td>
+    `;
+    tablaCotizacionBody.appendChild(filaDetalle);
+  });
+
+  // Mostrar el modal
+  const modal = document.getElementById('modalDetalle');
+  modal.style.display = 'block';
+}
+
+// Función para cerrar el modal
+function cerrarModal() {
+  const modal = document.getElementById('modalDetalle');
+  modal.style.display = 'none';
+}
+
+// ...
+
   </script>
 
 </head>
@@ -428,7 +475,7 @@ function recargarPagina() {
               <td>${clienteData.Total_Cotizacion}</td>
               <td>
                 <img src="Img/borrar.png" alt="Eliminar" class="eliminarCotizacionButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
-                <img src="Img/detalle.png" alt="Detalle" onclick="eliminardetalle('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
+                <img src="Img/detalle.png" alt="Detalle" class="detalleCotizacionButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
               </td>
           `;
           //<img src="Img/editar.png" alt="Editar" onclick="actualizarCotizacion('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
@@ -439,6 +486,7 @@ function recargarPagina() {
           
           const detalleCotizacionButton = fila.querySelector('.detalleCotizacionButton');
           detalleCotizacionButton.addEventListener('click', () => detalleCotizacion(documento.id));
+         
           
       });
 
@@ -473,25 +521,29 @@ function recargarPagina() {
           // Verificar si el documento existe antes de intentar eliminarlo
           const cotizacionDoc = await getDoc(cotizacionRef);
           if (!cotizacionDoc.exists()) {
-            console.log("La cotizacion con el ID", id, "no existe.");
+            console.log("La cotización con el ID", id, "no existe.");
             return;
           }
           // Confirmación antes de eliminar
-          const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar esta cotizacion?");
+          const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar esta cotización?");
           if (!confirmacion) {
             return;
           }
           // Eliminar el documento en Firestore
           await deleteDoc(cotizacionRef);
-          console.log("Cotizacion eliminada con éxito");
-          alert("Cotizacion eliminada con éxito");
+          console.log("Cotización eliminada con éxito");
+          alert("Cotización eliminada con éxito");
           location.reload();
           return;
         } catch (error) {
-          console.error("Error al eliminar la cotizacion:", error);
-          alert("Error al eliminar la cotizacion");
+          console.error("Error al eliminar la cotización:", error);
+          alert("Error al eliminar la cotización");
         }
       }
+
+
+
+
 
       </script>
     </div>
@@ -505,45 +557,46 @@ function recargarPagina() {
       <span class="close">&times;</span>
       <div id="ticketHeader">
         <div>
-         
+          <form action="myForm2">
+           <p>Folio Cotización: <span id="ticketIdCotizacion"></span></p>
           <p>Fecha: <span id="ticketFecha"></span></p>
-          <p>ID Cotizacion: <span id="ticketIdCotizacion"></span></p>
           <p>Nombre cliente: <span id="ticketIdCliente"></span></p>
-          <form action="">
+          
               <label for="Fecha">Fecha:</label>
               <input type="date" id="Fecha" name="Fecha" required>
               <label for="Id_Cliente">Nombre cliente:</label>
               <select name="Id_Cliente" required></select>
               <br><br/>
-              <input type="submit" value="Registrar Cotización" id="registrarBtn">
+              <input type="submit" value="Insertar" id="registrarBtn">
               <br>
             </form>
         </div>
         <div class="image-container">
-          <h2>Cotizacion</h2>
+          <h2>Cotización</h2>
           <img src="Img/Logo.jpeg" alt="Descripción de la imagen">
           <br>
-          <input type="submit" value="Guardar y Cerrar" id="cerrar">
+          <input type="submit" value="Guardar" id="cerrar">
         </div>
         <div>
-            <form id="myForm">
-              <h3>Detalle Cotización</h3>
+            <form action="myForm">
+              <h4>Refacción</h4>
               <label for="Cantidad">Cantidad:</label>
               <input type="number" id="Cantidad" name="Cantidad" required>
-              <label for="Id_Refaccion">Id_Refaccion:</label>
+              <label for="Id_Refaccion">Refacción:</label>
               <select name="Id_Refaccion" required> </select>
               <br>
               <label for="PrecioU">Precio Unitario:</label>
               <input type="number" id="PrecioU" name="PrecioU" required>
               <label for="SubTotal">SubTotal:</label>
               <input type="number" id="SubTotal" name="SubTotal" required>
-              <input type="submit" value="Registrar" id="registrarProductoBtn">
+              <input type="submit" value="Añadir" id="registrarProductoBtn">
               
             </form>
           </div>
       </div>
       <table>
         <thead>
+          <h4>Detalle Cotización</h4>
           <tr>
             <th>Cantidad</th>
             <th>Descripción Refacción</th>
@@ -561,7 +614,24 @@ function recargarPagina() {
 
     </div>
   </div>
-  
+  <div id="modalDetalle" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModal()">&times;</span>
+      <table>
+        <thead>
+          <h4>Detalle Cotización</h4>
+          <tr>
+            <th>Cantidad</th>
+            <th>Descripción Refacción</th>
+            <th>Precio Unitario</th>
+            <th>Subtotal</th>
+            <th>Acciones</th> <!-- Nuevo campo para acciones -->
+          </tr>
+        </thead>
+        <tbody id="tablaCotizacionBody"></tbody>
+      </table>
+    </div>
+  </div>
 
   <!-- Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">

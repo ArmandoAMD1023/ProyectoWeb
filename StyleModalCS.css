@@ -7,7 +7,7 @@
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(197, 179, 179, 0.4);
+    background-color: rgba(119, 163, 230, 0.4);
   }
 .modal-content {
     width: 80%;
@@ -116,4 +116,10 @@
 form {
     margin-bottom: 10px; /* Agrega margen inferior a los formularios */
     margin-top: 30px;
+  }
+
+  form[action="myForm2"],
+  form[action="myForm"]{
+    border: 2px solid #6a7278; /* Color del borde */
+    border-radius: 10px;
   }

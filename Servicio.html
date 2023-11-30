@@ -467,7 +467,7 @@ function recargarPagina() {
               <td>${clienteData.Total_Servicio}</td>
               <td>
                 <img src="Img/borrar.png" alt="Eliminar" class="eliminarServicioButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
-                <img src="Img/detalle.png" alt="Detalle" onclick="eliminardetalle('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
+                <img src="Img/detalle.png" alt="Detalle" class="detalleServicioButton" data-doc-id="${documento.id}"style="width: 20px; height: 20px; cursor: pointer;">
               </td>
           `;
           //<img src="Img/editar.png" alt="Editar" class="editarServicioButton" data-doc-id="${documento.id}" style="width: 20px; height: 20px; cursor: pointer;">
@@ -477,8 +477,8 @@ function recargarPagina() {
           const eliminarServicioButton = fila.querySelector('.eliminarServicioButton');
           eliminarServicioButton.addEventListener('click', () => eliminarServicio(documento.id));
         
-          const detalleCotizacionButton = fila.querySelector('.detalleCotizacionButton');
-          detalleCotizacionButton.addEventListener('click', () => detalleCotizacion(documento.id));
+          const detalleServicioButton = fila.querySelector('.detalleServicioButton');
+          detalleServicioButton.addEventListener('click', () => detalleCotizacion(documento.id));
           //const editarServicioButton = fila.querySelector('.editarServicioButton');
           //editarServicioButton.addEventListener('click', () => editarProveedor(doc.id));
       });
@@ -534,49 +534,50 @@ function recargarPagina() {
         <span class="close">&times;</span>
         <div id="ticketHeader">
           <div>
-            
-            <p>Fecha: <span id="ticketFecha"></span></p>
-            <p>ID Servicio: <span id="ticketIdServicio"></span></p>
-            <p>ID Cotizacion: <span id="ticketCotiacion"></span></p>
+            <form action="myForm2">
+           <p>Folio Servicio: <span id="ticketIdServicio"></span></p>
+            <p>Fecha: <span id="ticketFecha"></span></p> 
+            <!--<p>ID Cotizacion: <span id="ticketCotiacion"></span></p>-->
             <p>Nombre Cliente: <span id="ticketIdCliente"></span></p>
-            <form action="">
+            
               <label for="FechaS">Fecha:</label>
               <input type="date" id="FechaS" name="FechaS" required>
-              <label for="Id_ClienteS">Id_Cotización:</label>
+              <!--<label for="Id_ClienteS">Id_Cotización:</label>
               <select name="Id_Cotizacion"></select>
-              <br></br>
+              <br></br>-->
               <label for="Id_Cliente">Nombre Cliente:</label>
               <select name="Id_Cliente" required></select>
               <br><br/>
-              <input type="submit" value="Registar Servicio"id="registrarBtn">
+              <input type="submit" value="Insertar"id="registrarBtn">
             </form>
           </div>
           <div class="image-container">
             <h2>Servicio</h2>
             <img src="Img/Logo.jpeg" alt="Descripción de la imagen">
             <br>
-            <input type="submit" value="Guardar y cerrar" id="cerrar">
+            <input type="submit" value="Guardar" id="cerrar">
 
           </div>
           <div>
-            <form id="myForm">
-              <h3>Detalle Servicio</h3>
+            <form action="myForm">
+              <h4>Refacción</h4>
               <label for="Cantidad">Cantidad:</label>
               <input type="number" id="Cantidad" name="Cantidad" required>
-              <label for="Id_Refaccion">ID Refacción:</label>
+              <label for="Id_Refaccion">Refacción:</label>
               <select name="Id_Refaccion" required></select>
                <br>
               <label for="PrecioU">Precio Unitario:</label>
               <input type="number" id="PrecioU" name="PrecioUS" required>
               <label for="SubTotalS">SubTotal:</label>
               <input type="number" id="SubTotal" name="SubTotal" required>
-              <input type="submit" value="Registar" id="registrarProductoBtn">
+              <input type="submit" value="Añadir" id="registrarProductoBtn">
             </form>
           </div>
         </div>
     
         <table>
           <thead>
+            <h4>Detalle Servicio</h4>
             <tr>
               <th>Cantidad</th>
               <th>ID Refacción</th>
