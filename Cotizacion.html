@@ -211,18 +211,18 @@ function recargarPagina() {
 
 
 // ...
-const detalleData = collection(db1, 'Cotizacion');
+
 
 // Función para mostrar el modal con el detalle
-function detalleCotizacion(id) {
+function detalleCotizacionCollection(id) {
   // Obtener la información necesaria para el detalle (puedes modificar según tu lógica)
-  const detalleData = obtenerDetalleCotizacion(id);
+  const detalleCotizacionCollection = obtenerDetalleCotizacion(id);
 
   // Llenar la tabla del modal con la información del detalle
   const tablaCotizacionBody = document.getElementById('tablaCotizacionBody');
   tablaCotizacionBody.innerHTML = '';
 
-  detalleData.forEach(item => {
+  detalleCotizacionCollection.forEach(item => {
     const filaDetalle = document.createElement('tr');
     filaDetalle.innerHTML = `
       <td>${item.Cantidad}</td>
@@ -541,7 +541,43 @@ function cerrarModal() {
         }
       }
 
+      
 
+// Función para mostrar el modal con el detalle
+function detalleCotizacionCollection(id) {
+  const detalleCotizacionCollection = collection(db1, 'Cotizacion', cotizacionID, 'Detalle_Cotizacion');
+
+
+  // Llenar la tabla del modal con la información del detalle
+  const tablaCotizacionBody = document.getElementById('tablaCotizacionBody');
+  tablaCotizacionBody.innerHTML = '';
+
+  detalleCotizacionCollection.forEach(item => {
+    const filaDetalle = document.createElement('tr');
+    filaDetalle.innerHTML = `
+      <td>${item.Cantidad}</td>
+      <td>${item.Descripcion}</td>
+      <td>${item.PrecioUnitario}</td>
+      <td>${item.Subtotal}</td>
+      <td>
+        <!-- Puedes agregar acciones aquí si es necesario -->
+      </td>
+    `;
+    tablaCotizacionBody.appendChild(filaDetalle);
+  });
+
+  // Mostrar el modal
+  const modal = document.getElementById('modalDetalle');
+  modal.style.display = 'block';
+}
+
+// Función para cerrar el modal
+function cerrarModal() {
+  const modal = document.getElementById('modalDetalle');
+  modal.style.display = 'none';
+}
+
+// ...
 
 
 
@@ -578,7 +614,7 @@ function cerrarModal() {
           <input type="submit" value="Guardar" id="cerrar">
         </div>
         <div>
-            <form action="myForm">
+            <form id="myForm">
               <h4>Refacción</h4>
               <label for="Cantidad">Cantidad:</label>
               <input type="number" id="Cantidad" name="Cantidad" required>
