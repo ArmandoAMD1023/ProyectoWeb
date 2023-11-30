@@ -245,6 +245,7 @@
               console.error("Error al agregar el producto a la cotización:", error);
               alert("Error al agregar el producto a la cotización");
           }
+          location.reload();
       }
 
 // Limpiar la lista de productos después de agregarlos a la cotización
@@ -600,23 +601,25 @@ function recargarPagina() {
         <div>
           <form action="myForm2">
            <p>Folio Cotización: <span id="ticketIdCotizacion"></span></p>
-          <p>Fecha: <span id="ticketFecha"></span></p>
-          <p>Nombre cliente: <span id="ticketIdCliente"></span></p>
-          
+          <p><span id="ticketFecha"></span></p>
+          <p><span id="ticketIdCliente"></span></p>
+        </form>
+        <br>
+        <br>
               <label for="Fecha">Fecha:</label>
               <input type="date" id="Fecha" name="Fecha" required>
               <label for="Id_Cliente">Nombre cliente:</label>
               <select name="Id_Cliente" required></select>
               <br><br/>
-              <input type="submit" value="Insertar" id="registrarBtn">
+
               <br>
-            </form>
+            
         </div>
         <div class="image-container">
           <h2>Cotización</h2>
           <img src="Img/Logo.jpeg" alt="Descripción de la imagen">
           <br>
-          <input type="submit" value="Guardar" id="cerrar">
+          <input type="submit" value="Guardar Cotización" id="registrarBtn">
         </div>
         <div>
             <form id="myForm">
