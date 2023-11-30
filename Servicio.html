@@ -74,18 +74,18 @@
         registrarBtn.disabled = true;
         // Mostrar el valor seleccionado en la etiqueta con id "resultado"
         const resultado = document.getElementById('ticketIdCliente');
-        const resutado1 = document.getElementById('ticketCotiacion');
+        //const resutado1 = document.getElementById('ticketCotiacion');
         const fecha1 = document.getElementById('ticketFecha');
         const servicioID = document.getElementById('ticketIdServicio');
         resultado.textContent = clienteSeleccionado;
-        resutado1.textContent = cotizacionSeleccionado;
+        //resutado1.textContent = cotizacionSeleccionado;
         fecha1.textContent = fechaActual;
 
         const servicioCollection = collection(db1, 'Servicio');
         
         const nuevoServicio = {
           Fecha: fechaActual,
-          Id_Cotizacion:cotizacionIDSeleccionadoId,
+          //Id_Cotizacion:cotizacionIDSeleccionadoId,
           Id_Cliente: clienteSeleccionadoId,
           Total_Servicio: parseFloat(totalAmountSpan.textContent)
           // Agrega más campos según tus necesidades
@@ -100,6 +100,7 @@
                 productosServicio.forEach(async (producto) => {
                     await agregarProductoServicioFirestore(docRef.id, producto);
                 });
+                //location.reload();
                 // Puedes realizar otras acciones después de agregar el cliente
             })
             .catch((error) => {
@@ -107,7 +108,7 @@
                 alert("Error al agregar el servicio");
             });
       }
-
+   
 
       //
         
@@ -130,7 +131,10 @@
                 <td>
             <img src="Img/borrar.png" alt="Eliminar" onclick="eliminarProductoS('${doc.id}')"style="width: 20px; height: 20px; cursor: pointer;">
             </td>
+            
             `;
+
+         
 
             // Agregar la nueva fila a la tabla
             tablaServicioBody.appendChild(newRow);
@@ -151,7 +155,11 @@
 
         // Almacenar el producto en una lista (puedes inicializar esta lista fuera de la función)
         productosServicio.push(productoServicio);
+        cuerpoTablaClientes.appendChild(fila);
+         const eliminarProductoS = fila.querySelector('.eliminarProductoS');
+          eliminarProductoS.addEventListener('click', () => eliminarServicioP(documento.id));
         }
+        
 
         function calcularTotal() {
             let total = 0;
@@ -208,6 +216,26 @@ function recargarPagina() {
             cerrar.addEventListener('click', recargarPagina);
         }
     }); 
+
+   async function eliminarServicioP(event) {
+    try {
+        // Confirmación antes de eliminar
+        const confirmacion = window.confirm("¿Estás seguro de que deseas eliminar este servicio?");
+        if (!confirmacion) {
+            return;
+        }
+
+        // Eliminar la fila de la tabla
+        fila.remove();
+
+        console.log("Servicio eliminado de la interfaz de usuario");
+        alert("Servicio eliminado de la interfaz de usuario");
+    } catch (error) {
+        console.error("Error al eliminar el servicio:", error);
+        alert("Error al eliminar al servicio");
+    }
+}
+
   </script>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -536,10 +564,12 @@ function recargarPagina() {
           <div>
             <form action="myForm2">
            <p>Folio Servicio: <span id="ticketIdServicio"></span></p>
-            <p>Fecha: <span id="ticketFecha"></span></p> 
+            <p><span id="ticketFecha"></span></p> 
             <!--<p>ID Cotizacion: <span id="ticketCotiacion"></span></p>-->
-            <p>Nombre Cliente: <span id="ticketIdCliente"></span></p>
-            
+            <p> <span id="ticketIdCliente"></span></p>
+          </form>
+          <br>
+          <br>
               <label for="FechaS">Fecha:</label>
               <input type="date" id="FechaS" name="FechaS" required>
               <!--<label for="Id_ClienteS">Id_Cotización:</label>
@@ -548,18 +578,18 @@ function recargarPagina() {
               <label for="Id_Cliente">Nombre Cliente:</label>
               <select name="Id_Cliente" required></select>
               <br><br/>
-              <input type="submit" value="Insertar"id="registrarBtn">
-            </form>
+              
+           
           </div>
           <div class="image-container">
             <h2>Servicio</h2>
             <img src="Img/Logo.jpeg" alt="Descripción de la imagen">
             <br>
-            <input type="submit" value="Guardar" id="cerrar">
+            <input type="submit" value="Guardar Servicio"id="registrarBtn">
 
           </div>
           <div>
-            <form action="myForm">
+            <form id="myForm">
               <h4>Refacción</h4>
               <label for="Cantidad">Cantidad:</label>
               <input type="number" id="Cantidad" name="Cantidad" required>
