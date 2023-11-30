@@ -133,19 +133,14 @@
             </td>
             
             `;
-
-         
-
-            // Agregar la nueva fila a la tabla
             tablaServicioBody.appendChild(newRow);
 
-            // Calcular y actualizar el total
+            //const eliminarProductoS = fila.querySelector('.eliminarProductoS');
+            //eliminarProductoS.addEventListener('click', () => eliminarServicioP(documento.id));
+
             const totalAmount = calcularTotal();
             totalAmountSpan.textContent = totalAmount.toFixed(2);
-
-            // Limpiar los campos del formulario
             limpiarFormulario();
-
             const productoServicio = {
             Cantidad: cantidad,
             Id_Refaccion: refaccionSeleccionadoId,
@@ -155,9 +150,8 @@
 
         // Almacenar el producto en una lista (puedes inicializar esta lista fuera de la función)
         productosServicio.push(productoServicio);
-        cuerpoTablaClientes.appendChild(fila);
-         const eliminarProductoS = fila.querySelector('.eliminarProductoS');
-          eliminarProductoS.addEventListener('click', () => eliminarServicioP(documento.id));
+        //cuerpoTablaClientes.appendChild(fila);
+        // 
         }
         
 
@@ -209,13 +203,7 @@ productosServicio.length = 0;
 function recargarPagina() {
         location.reload();
     }
-    document.addEventListener("DOMContentLoaded", function() {
-        const cerar = document.getElementById('cerrar');
-
-        if (cerar) {
-            cerrar.addEventListener('click', recargarPagina);
-        }
-    }); 
+    
 
    async function eliminarServicioP(event) {
     try {
@@ -536,20 +524,40 @@ function recargarPagina() {
           option.text = refaccionData.Descripcion; 
           selectrefacciones.add(option);
       });
-      const cotizacionCollection = collection(db, 'Cotizacion');
-      // Obtener todos los documentos de la colección de clientes
-      const cotizacionesSnapshot = await getDocs(cotizacionCollection);
-      // Obtener el elemento <select> por su nombre
-      const selectCotizacion = document.getElementsByName('Id_Cotizacion')[0];
-      // Iterar sobre los documentos y agregar opciones al <select>
-      cotizacionesSnapshot.forEach((doc) => {
-          const cotizacionData = doc.data();
-          // Crear un elemento de opción y agregarlo al <select>
-          const option = document.createElement('option');
-          option.value = doc.id; // Usar el ID del documento como valor
-          option.text = cotizacionData.Id_Cliente; // Usar el nombre del cliente como texto de la opción
-          selectCotizacion.add(option);
+      async function detalleCotizacion(id) {
+  const detalleCotizacionCollection = collection(db, 'Servicio', id, 'Detalle_Servicio');
+
+
+  // Llenar la tabla del modal con la información del detalle
+  const tablaCotizacionBody = document.getElementById('tablaCotizacionBody2');
+  
+  const refaccionesSnapshot = await getDocs(detalleCotizacionCollection);
+      await refaccionesSnapshot.forEach(async (documento2) => {
+        const clienteData = documento2.data();
+
+        const filaDetalle = document.createElement('tr');
+        console.log(clienteData.Cantidad);
+
+        const docRef = doc(db, "Refacciones", clienteData.Id_Refaccion);
+          const docSnapRef = await getDoc(docRef);
+
+          let refaccionData = {};
+          if (docSnapRef.exists()) {
+              refaccionData = docSnapRef.data();
+          } else {
+              console.log("No such document!");
+          }
+    filaDetalle.innerHTML = `
+      <td>${clienteData.Cantidad}</td>
+      <td>${refaccionData.Descripcion}</td>
+      <td>${clienteData.Precio_Unitario}</td>
+      <td>${clienteData.Subtotal}</td>
+    `;
+    tablaCotizacionBody.appendChild(filaDetalle);
       });
+  // Mostrar el modal
+  document.getElementById('modalDetalle').style.display = 'block';
+}
       </script>
     </div>
     <!-- /.content -->
@@ -622,6 +630,23 @@ function recargarPagina() {
         <div id="total">
           <p>Total $ <span id="totalAmount">0</span></p>
         </div>
+      </div>
+    </div>
+    <div id="modalDetalle" class="modal">
+      <div class="modal-content">
+        <span class="close"id="cerrar">&times;</span>
+        <table class="table" id="tabla-clientes" border="1">
+          <thead>
+            <h4>Detalle Servicio</h4>
+            <tr>
+              <th>Cantidad</th>
+              <th>Descripción Refacción</th>
+              <th>Precio Unitario</th>
+              <th>Subtotal</th><!-- Nuevo campo para acciones -->
+            </tr>
+          </thead>
+          <tbody id="tablaCotizacionBody2"></tbody>
+        </table>
       </div>
     </div>
   <!-- Control Sidebar -->
